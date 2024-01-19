@@ -3,11 +3,9 @@ import VBarCharts from '../components/VBarCharts.vue'
 </script>
 
 <template>
-  <el-card>
-    <div class="chart">
-      <VBarCharts />
-    </div>
-  </el-card>
+  <div class="chart">
+    <VBarCharts />
+  </div>
 </template>
 
 <style lang="scss" scoped>
