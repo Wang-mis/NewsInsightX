@@ -32,7 +32,7 @@ onMounted(() => {
 </template>
 
 <script>
-import { getUserInfo, getUserTest } from '../api/user'
+import { getUserInfo, getUserTest } from '../api/requestAPI'
 
 export default {
   name: "TestView",
