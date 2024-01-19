@@ -21,10 +21,10 @@
       </el-menu-item>
       <div class="flex-grow"></div>
       <el-menu-item index="/about">
-        <h2>About</h2>
+        <h2>Search</h2>
       </el-menu-item>
       <el-menu-item index="/test">
-        <h2>Test</h2>
+        <h2>Analysis</h2>
       </el-menu-item>
     </el-menu>
   </header>
