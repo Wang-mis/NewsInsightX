@@ -47,7 +47,7 @@ const handleSelect = (key, keyPath) => {
 
 .home-header{
   top: 1rem;
-  position: sticky;
+  /* position: sticky; */
   .flex-grow {
     flex-grow: 1;
   }
