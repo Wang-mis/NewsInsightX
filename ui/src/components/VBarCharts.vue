@@ -1,3 +1,5 @@
+
+<!-- 这是前端页面展示的统计数据面板模版 -->
 <template>
     <div class="echarts" id="charts" ref="chart">
     </div>

@@ -28,3 +28,7 @@ a,
     place-items: center;
   } */
 }
+
+body::-webkit-scrollbar {
+  width: 0rem; /* 设置滚动条宽度 */
+}
