@@ -1,6 +1,7 @@
 <!-- 这是前端页面展示的新闻文章模版 -->
 <template>
     <div class="v-new-card">
+        123
     </div>
 </template>
 
