@@ -19,7 +19,7 @@ coverage
 
 # server
 **/__pycache__
-
+**/datasets/
 
 
 # Editor directories and files
