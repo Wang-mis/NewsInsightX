@@ -20,16 +20,15 @@
         <h2>NewsInsightX: The Latest Global News Portal System Featuring Hot News</h2>
       </el-menu-item>
       <div class="flex-grow"></div>
-
-      <el-menu-item @click="handelSync">
-        <el-icon style="font-size: 2em;"><Refresh /></el-icon><h2>Sync</h2>
-      </el-menu-item>
       
       <el-menu-item index="/search">
         <el-icon style="font-size: 2em;"><Search /></el-icon><h2>Search</h2>
       </el-menu-item>
       <el-menu-item index="/analysis">
         <el-icon style="font-size: 2em;"><DataAnalysis /></el-icon><h2>Analysis</h2>
+      </el-menu-item>
+      <el-menu-item @click="handelSync">
+        <el-icon style="font-size: 2em;"><Refresh /></el-icon><h2>Synchronize</h2>
       </el-menu-item>
       <!-- 中英文翻译 -->
       <!-- <el-menu-item @click="exportDataSet"><el-icon style="font-size: 2em;"><Download /></el-icon></el-menu-item> -->
