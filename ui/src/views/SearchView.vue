@@ -20,9 +20,9 @@
     </div>
 
     <div class="news-cards-container">
-      <div class="new-card" v-for="(item, index) in cardList">
-        <VNewCard />
-      </div>
+
+      <VNewCard :data="item" v-for="(item, index) in cardList"/>
+
     </div>
 
     <div class="demo-pagination-block">
@@ -30,7 +30,7 @@
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
         :page-sizes="[20, 40, 80, 100]"
-        background="true"
+        background
         layout="total, sizes, prev, pager, next, jumper"
         :total="100"
         @size-change="handleSizeChange"
@@ -43,9 +43,11 @@
 
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
+import { generateRandomString } from '../utils/funcsUtil'
+
 import { reactive, ref, onMounted } from 'vue'
 
-const cardList = ref([1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10])
+const cardList = ref<any>([])
 
 const formInline = reactive({
   user: '',
@@ -55,6 +57,18 @@ const formInline = reactive({
 const onSubmit = () => {
   console.log('submit!')
 }
+
+onMounted(() => {
+  for(let i = 0; i < 20; i++) {
+    cardList.value.push({
+      id: generateRandomString(8),
+      title: "US Overtakes China as South Korea’s Top Export Market",
+      author: "Sam Kim and Hooyeon Kim",
+      time: "January 1, 2024 at 10:19 AM",
+      url: "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
+    })
+  }
+})
 
 const currentPage = ref(1)
 const pageSize = ref(20)
@@ -68,16 +82,10 @@ const handleCurrentChange = (val: number) => {
 </script>
 
 <style scoped>
-.new-card {
-  width: 100%;
-  height: 120px;
-  border-radius: 10px;
-  background: rgb(191, 191, 191);
-}
 .news-cards-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-gap: 2.5rem;
+  grid-gap: 1rem;
 }
 .search-container {
   margin: 1rem 1rem 0 1rem;
@@ -92,7 +100,7 @@ const handleCurrentChange = (val: number) => {
 
 
 .demo-pagination-block {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
