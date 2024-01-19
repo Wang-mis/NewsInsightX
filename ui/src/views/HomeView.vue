@@ -1,9 +1,18 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import VBarCharts from '../components/VBarCharts.vue'
 </script>
 
 <template>
   <el-card>
-    <TheWelcome />
+    <div class="chart">
+      <VBarCharts />
+    </div>
   </el-card>
 </template>
+
+<style lang="scss" scoped>
+.chart {
+  width: 100%;
+  height: 400px;
+}
+</style>
