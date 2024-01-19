@@ -5,7 +5,9 @@ import VBarCharts from '../components/VBarCharts.vue'
 <template>
   <div class="intro-container">
     <el-card>这里做一些简介</el-card>
-    <el-card>这里做一些卡片展示、当前时间、系统展示的数据时间段</el-card>
+    <el-card>
+      这里做一些卡片展示、当前时间、系统展示的数据时间段
+    </el-card>
   </div>
   <div class="card-container">
     <el-card>
