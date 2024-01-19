@@ -75,6 +75,6 @@ import VBarCharts from '../components/VBarCharts.vue'
 }
 .chart {
   width: 100%;
-  height: 300px;
+  height: 350px;
 }
 </style>
