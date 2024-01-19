@@ -44,13 +44,19 @@
 <script setup>
 import { Refresh, Search, DataAnalysis, DataLine } from '@element-plus/icons-vue'
 import { RouterView } from 'vue-router'
+import { ElNotification } from 'element-plus'
+
 
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
 }
 
 const handelSync = () => {
-  alert("更新数据")
+  ElNotification({
+    title: "更新数据",
+    type: "success",
+    duration: 1000
+  })
 }
 </script>
 

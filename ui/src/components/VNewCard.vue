@@ -42,7 +42,7 @@
                 <el-link type="success" :href="data.url" target="_blank">{{ data.url }}</el-link>
         </div>
 
-        <div>
+        <div style="margin-top: 1rem;">
             这是前端页面展示的新闻文章模版
             这是前端页面展示的新闻文章模版
             这是前端页面展示的新闻文章模版
