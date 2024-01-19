@@ -26,6 +26,8 @@
       <el-menu-item index="/analysis">
         <h2>Analysis</h2>
       </el-menu-item>
+      <!-- 中英文翻译 -->
+      <!-- <el-menu-item @click="exportDataSet"><el-icon style="font-size: 2em;"><Download /></el-icon></el-menu-item> -->
     </el-menu>
   </header>
 
