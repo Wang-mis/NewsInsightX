@@ -20,10 +20,10 @@
         <!-- <h2>NewsInsightX: 以热点新闻为特色的最新全球新闻门户系统</h2> -->
       </el-menu-item>
       <div class="flex-grow"></div>
-      <el-menu-item index="/about">
+      <el-menu-item index="/search">
         <h2>Search</h2>
       </el-menu-item>
-      <el-menu-item index="/test">
+      <el-menu-item index="/analysis">
         <h2>Analysis</h2>
       </el-menu-item>
     </el-menu>

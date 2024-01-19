@@ -1,6 +1,6 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="search">
+    <h1>This is an search page</h1>
     <br>
     <h2> {{ name }}</h2>
   </div>
@@ -8,7 +8,7 @@
 <script>
 import { useStore } from "vuex"
 export default {
-  name: "AboutView",
+  name: "SearchView",
   setup() {
     let { name } = useStore().state  //2.取值
 
@@ -18,8 +18,8 @@ export default {
   }
 }
 </script>
-<style>
-.about {
+<style scoped>
+.search {
   display: flex;
 }
 </style>
