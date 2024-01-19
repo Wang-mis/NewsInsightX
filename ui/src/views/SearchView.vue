@@ -1,24 +1,14 @@
 <template>
   <div class="search-container">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="关键词">
-        <el-input v-model="formInline.user" placeholder="请输入关键词（人物名称、热点词、热点事件）" clearable />
+      <el-form-item label="关键词：">
+        <el-input v-model="formInline.user" placeholder="人物名称、热点词、热点事件" clearable />
       </el-form-item>
-      <el-form-item label="关键词">
-        <el-select
-          v-model="formInline.region"
-          placeholder="请输入关键词（人物名称、热点词、热点事件）"
-          clearable
-        >
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Activity time">
+      <el-form-item label="时间点：">
         <el-date-picker
           v-model="formInline.date"
           type="date"
-          placeholder="Pick a date"
+          placeholder="选择日期"
           clearable
         />
       </el-form-item>
@@ -34,7 +24,6 @@ import { reactive } from 'vue'
 
 const formInline = reactive({
   user: '',
-  region: '',
   date: '',
 })
 
