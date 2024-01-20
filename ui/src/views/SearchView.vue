@@ -3,7 +3,7 @@
     <div class="search-form-comtainer">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="关键词：">
-          <el-input v-model="formInline.user" placeholder="人物名称、热点词、热点事件" clearable />
+          <el-input v-model="formInline.keyword" placeholder="人物名称、热点词、热点事件" clearable />
         </el-form-item>
         <el-form-item label="时间点：">
           <el-date-picker
@@ -27,12 +27,12 @@
 
     <div class="demo-pagination-block">
       <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
+        v-model:current-page="pageModel.page"
+        v-model:page-size="pageModel.limit"
         :page-sizes="[20, 40, 80, 100]"
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="100"
+        :total="pageModel.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -43,20 +43,23 @@
 
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
-import { generateRandomString } from '../utils/funcsUtil'
+import { generateRandomString } from '@/utils/funcsUtil'
+import { queryNews } from '@/api/requestAPI'
 
 import { reactive, ref, onMounted } from 'vue'
 
 const cardList = ref<any>([])
 
 const formInline = reactive({
-  user: '',
+  keyword: '',
   date: '',
 })
 
-const onSubmit = () => {
-  console.log('submit!')
-}
+const pageModel = reactive({
+  page: 1,//默认当前页码
+  limit: 20,//默认每页的数量
+  total: 100//返回的总记录数（未分页）
+})
 
 onMounted(() => {
   for(let i = 0; i < 20; i++) {
@@ -70,13 +73,32 @@ onMounted(() => {
   }
 })
 
-const currentPage = ref(1)
-const pageSize = ref(20)
+// 请求后端数据
+const getNewsList = async () => {
+  const config_data = {...formInline, ...pageModel}
+  await gainNewsList(config_data)
+}
+
+async function gainNewsList(config_data) {
+  await queryNews(config_data).then(res => {
+    if (res.code === 0) {
+      console.log("finttuning-embedding: ", res.data)
+    }
+  })
+}
+
+
+const onSubmit = () => {
+  console.log('submit!')
+}
+
 
 const handleSizeChange = (val: number) => {
+  pageModel.limit = val
   console.log(`${val} items per page`)
 }
 const handleCurrentChange = (val: number) => {
+  pageModel.page = val
   console.log(`current page: ${val}`)
 }
 </script>

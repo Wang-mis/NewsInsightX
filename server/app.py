@@ -53,6 +53,29 @@ def user_test():
     return ReturnWarningInfo()
 
 
+@app.route("/querynews", methods=["POST"])
+@cross_origin()
+def queryNewsAPI():
+    data = request.get_json()
+    print(data)
+
+    cardList = []
+    for ele in range(20):
+        cardList.append({
+            "id": "zIISJIASnlkj",
+            "title": "US Overtakes China as South Korea’s Top Export Market",
+            "author": "Sam Kim and Hooyeon Kim",
+            "time": "January 1, 2024 at 10:19 AM",
+            "url": "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
+        })
+    
+
+    test_arg = data.get("test_arg")
+    if test_arg == "test_arg":
+        return ReturnSuccessInfo(data={ "id": "1", "arr": [1,2,3] })
+    
+    return ReturnWarningInfo()
+
 if __name__ == '__main__':
     print('run 0.0.0.0:14449')
     app.run(host='0.0.0.0', port=14449)
