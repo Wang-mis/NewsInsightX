@@ -19,6 +19,10 @@
       </el-form>
     </div>
 
+    <div v-if="cardList.length < 1">
+      <el-empty description="暂无数据" :image-size="200" />
+    </div>
+
     <div class="news-cards-container">
       <!-- 加上div 每个card 大小自适应 -->
       <div v-for="(item, index) in cardList" :key="index">
