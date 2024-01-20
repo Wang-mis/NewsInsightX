@@ -1,212 +1,137 @@
+from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, String, DECIMAL, Float, Text
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
+import pandas as pd
 
-import sqlite3
+engine = create_engine('sqlite:///E:\\Projects\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
 
-class SqliteTool():
-    """
-       简单sqlite数据库工具类
-       编写这个类主要是为了封装sqlite，继承此类复用方法
-       """
-    def __init__(self, dbName="sqlite3Test.db"):
-        """
-        初始化连接——使用完需关闭连接
-        :param dbName: 连接库的名字，注意，以'.db'结尾
-        """
-        # 连接数据库
-        self._conn = sqlite3.connect(dbName)
-        # 创建游标
-        self._cur = self._conn.cursor()
+Base = declarative_base()
 
-    def close_con(self):
-        """
-        关闭连接对象——主动调用
-        :return:
-        """
-        self._cur.close()
-        self._conn.close()
-    
-    # 创建数据表
-    def create_tabel(self, sql: str):
-        """
-        创建表
-        :param sql: create sql语句
-        :return: True表示创建表成功
-        """
-        try:
-            self._cur.execute(sql)
-            self._conn.commit()
-            print("[create table success]")
-            return True
-        except Exception as e:
-            print("[create table error]", e)
-    
-    # 删除数据表
-    def drop_table(self, sql: str):
-        """
-        删除表
-        :param sql: drop sql语句
-        :return: True表示删除成功
-        """
-        try:
-            self._cur.execute(sql)
-            self._conn.commit()
-            return True
-        except Exception as e:
-            print("[drop table error]", e)
-            return False
-    
-    # 插入或更新表数据，一次插入或更新一条数据
-    def operate_one(self, sql: str, value: tuple):
-        """
-        插入或更新单条表记录
-        :param sql: insert语句或update语句
-        :param value: 插入或更新的值，形如（）
-        :return: True表示插入或更新成功
-        """
-        try:
-            self._cur.execute(sql, value)
-            self._conn.commit()
-            if 'INSERT' in sql.upper():
-                print("[insert one record success]")
-            if 'UPDATE' in sql.upper():
-                print("[update one record success]")
-            return True
-        except Exception as e:
-            print("[insert/update one record error]", e)
-            self._conn.rollback()
-            return False
-    # 插入或更新表数据，一次插入或更新多条数据
-    
-    def operate_many(self, sql: str, value: list):
-        """
-        插入或更新多条表记录
-        :param sql: insert语句或update语句
-        :param value: 插入或更新的字段的具体值，列表形式为list:[(),()]
-        :return: True表示插入或更新成功
-        """
-        try:
-            # 调用executemany()方法
-            self._cur.executemany(sql, value)
-            self._conn.commit()
-            if 'INSERT' in sql.upper():
-                print("[insert many  records success]")
-            if 'UPDATE' in sql.upper():
-                print("[update many  records success]")
-            return True
-        except Exception as e:
-            print("[insert/update many  records error]", e)
-            self._conn.rollback()
-            return False
-    
-    # 删除表数据
-    def delete_record(self, sql: str):
-        """
-        删除表记录
-        :param sql: 删除记录SQL语句
-        :return: True表示删除成功
-        """
-        try:
-            if 'DELETE' in sql.upper():
-                self._cur.execute(sql)
-                self._conn.commit()
-                print("[detele record success]")
-                return True
-            else:
-                print("[sql is not delete]")
-                return False
-        except Exception as e:
-            print("[detele record error]", e)
-            return False
-    
-    # 查询一条数据
-    def query_one(self, sql: str, params=None):
-        """
-        查询单条数据
-        :param sql: select语句
-        :param params: 查询参数，形如()
-        :return: 语句查询单条结果
-        """
-        try:
-            if params:
-                self._cur.execute(sql, params)
-            else:
-                self._cur.execute(sql)
-            # 调用fetchone()方法
-            r = self._cur.fetchone()
-            print("[select one record success]")
-            return r
-        except Exception as e:
-            print("[select one record error]", e)
-    
-    # 查询多条数据
-    def query_many(self, sql: str, params=None):
-        """
-        查询多条数据
-        :param sql: select语句
-        :param params: 查询参数，形如()
-        :return: 语句查询多条结果
-        """
-        try:
-            if params:
-                self._cur.execute(sql, params)
-            else:
-                self._cur.execute(sql)
-            # 调用fetchall()方法
-            r = self._cur.fetchall()
-            print("[select many records success]")
-            return r
-        except Exception as e:
-            print("[select many records error]", e)
+class MergeItem(Base):
+    __tablename__ = 'merge_table'
+
+    # 系统自带id 可自增
+    AutoId = Column(Integer, primary_key=True)
+
+    GlobalEventID = Column(Integer)
+    Day = Column(Integer)
+    MonthYear = Column(Integer)
+    Year = Column(Integer)
+    FractionDate = Column(Float)
+
+    Actor1Code = Column(String)
+    Actor1Name = Column(String)
+    Actor1CountryCode = Column(String)
+    Actor1KnownGroupCode = Column(String)
+    Actor1EthnicCode = Column(String)
+    Actor1Religion1Code = Column(String)
+    Actor1Religion2Code = Column(String)
+    Actor1Type1Code = Column(String)
+    Actor1Type2Code = Column(String)
+    Actor1Type3Code = Column(String)
+
+    Actor2Code = Column(String)
+    Actor2Name = Column(String)
+    Actor2CountryCode = Column(String)
+    Actor2KnownGroupCode = Column(String)
+    Actor2EthnicCode = Column(String)
+    Actor2Religion1Code = Column(String)
+    Actor2Religion2Code = Column(String)
+    Actor2Type1Code = Column(String)
+    Actor2Type2Code = Column(String)
+    Actor2Type3Code = Column(String)
+
+    IsRootEvent = Column(Integer)
+    EventCode = Column(Integer)
+    EventBaseCode = Column(Integer)
+    EventRootCode = Column(Integer)
+    QuadClass = Column(Integer)
+
+    GoldsteinScale = Column(Float)
+
+    NumMentions = Column(Integer)
+    NumSources = Column(Integer)
+    NumArticles = Column(Integer)
+
+    AvgTone = Column(Float)
+
+    Actor1Geo_Type = Column(Integer)
+    Actor1Geo_Fullname = Column(String)
+    Actor1Geo_CountryCode = Column(String)
+    Actor1Geo_ADM1Code = Column(String)
+    Actor1Geo_Lat = Column(String)
+    Actor1Geo_Long = Column(String)
+    Actor1Geo_FeatureID = Column(String)
+
+    Actor2Geo_Type = Column(Integer)
+    Actor2Geo_Fullname = Column(String)
+    Actor2Geo_CountryCode = Column(String)
+    Actor2Geo_ADM1Code = Column(String)
+    Actor2Geo_Lat = Column(String)
+    Actor2Geo_Long = Column(String)
+    Actor2Geo_FeatureID = Column(String)
+
+    ActionGeo_Type = Column(Integer)
+    ActionGeo_Fullname = Column(String)
+    ActionGeo_CountryCode = Column(String)
+    ActionGeo_ADM1Code = Column(String)
+    ActionGeo_Lat = Column(String)
+    ActionGeo_Long = Column(String)
+    ActionGeo_FeatureID = Column(String)
+
+    DATEADDED = Column(Integer)
+    SOURCEURL = Column(String)
+
+    EventTimeDate = Column(Integer)
+    MentionTimeDate = Column(Integer)
+    MentionType = Column(Integer)
+
+    MentionSourceName = Column(String)
+    MentionIdentifier = Column(String)
+
+    SentenceID = Column(Integer)
+    Actor1CharOffset = Column(Integer)
+    Actor2CharOffset = Column(Integer)
+    ActionCharOffset = Column(Integer)
+    InRawText = Column(Integer)
+    Confidence = Column(Integer)
+    MentionDocLen = Column(Integer)
+
+    MentionDocTone = Column(Float)
+    MentionDocTranslationInfo = Column(String)
+    Extras = Column(String)
+
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String)
+
+
+# 新闻表
+class NewItem(Base):
+    __tablename__ = 'new_table'
+
+    # 系统自带id 可自增
+    AutoId = Column(Integer, primary_key=True)
+
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String)
+    Title = Column(String)
+    Author = Column(String)
+    PTime = Column(String)
+    DTime = Column(Integer)
+    MentionSourceName = Column(String)
+    MentionIdentifier = Column(String)
+    Content = Column(Text)
+
+
+def test():
+    # 写一条sql
+    sql = "SELECT COUNT(*) FROM new_table"
+    #建立dataframe
+    df = pd.read_sql_query(sql,engine)
+    print(df)
 
 
 if __name__ == '__main__':
-    # 创建数据表info的SQL语句
-    create_tb_sql = '''
-        create table if not exists info(
-            id  int  primary key,
-            name text not null,
-            age int not null,
-            address varchar(50)
-        );'''
-
-    # 创建对象
-    mySqlite = SqliteTool()
-    # 创建数据表
-    mySqlite.create_tabel(create_tb_sql)
-    # 插入数据
-    # 一次插入一条数据
-    mySqlite.operate_one('insert into info(id, name, age) values(?,?,?)', (4, 'Tom3', 22))
-    # 一次插入多条数据
-    mySqlite.operate_many('insert into info(id, name, age) values(?,?,?)', [
-        (5, 'Alice', 22),
-        (6, 'John', 21)])
-    '''
-    # 更新数据SQL语句
-    update_sql = "update info set age=? where name=?"
-    update_value = (22,'Tom')
-    update_values = [(22,'Tom'),(32,'John')]
-    # 一次更新一条数据
-    mySqlite.operate_one(update_sql,update_value)
-    # 一次更新多条数据
-    mySqlite.operate_many(update_sql,update_values)
-    '''
-    # 查询数据
-    select_sql = "select name from info where age =? and name = ?"
-    conn = sqlite3.connect("sqlite3Test.db")
-    # 创建游标
-    cur = conn.cursor()
-    # result_one = cur.execute("select * from info")
-    result_one = cur.execute("select * from info where name= ? ", ('Tom3', ))
-    print(result_one.fetchall())
-    all_logs = result_one.fetchall()
-    for log in all_logs:
-        print(log)
-    print(result_one)
-    result_many = mySqlite.query_many(select_sql, (23, 'Tom'))
-    print(result_many)
-    # 删除数据
-    '''
-    delete_sql = "delete from info where name = 'Tom'"
-    mySqlite.delete_record(delete_sql)
-    '''
-    # 关闭游标和连接
-    mySqlite.close_con()
+    test()
+    pass
