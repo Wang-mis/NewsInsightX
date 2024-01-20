@@ -40,7 +40,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Refresh, Search, DataAnalysis, DataLine } from '@element-plus/icons-vue'
 import { RouterView } from 'vue-router'
 import { ElNotification } from 'element-plus'
