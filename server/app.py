@@ -69,12 +69,12 @@ def queryNewsAPI():
             "url": "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
         })
     
+    data = {
+        "totalRecords": 300,
+        "newsList": cardList
+    }
 
-    test_arg = data.get("test_arg")
-    if test_arg == "test_arg":
-        return ReturnSuccessInfo(data={ "id": "1", "arr": [1,2,3] })
-    
-    return ReturnWarningInfo()
+    return ReturnSuccessInfo(data=data)
 
 if __name__ == '__main__':
     print('run 0.0.0.0:14449')

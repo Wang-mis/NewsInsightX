@@ -58,22 +58,14 @@ const formInline = reactive({
 const pageModel = reactive({
   page: 1,//默认当前页码
   limit: 20,//默认每页的数量
-  total: 100//返回的总记录数（未分页）
+  total: 0//返回的总记录数（未分页）
 })
 
-onMounted(() => {
-  for(let i = 0; i < 20; i++) {
-    cardList.value.push({
-      id: generateRandomString(8),
-      title: "US Overtakes China as South Korea’s Top Export Market",
-      author: "Sam Kim and Hooyeon Kim",
-      time: "January 1, 2024 at 10:19 AM",
-      url: "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
-    })
-  }
+onMounted( async () => {
+  await getNewsList()
 })
 
-// 请求后端数据
+// 请求后端新闻文章
 const getNewsList = async () => {
   const config_data = {...formInline, ...pageModel}
   await gainNewsList(config_data)
@@ -82,14 +74,17 @@ const getNewsList = async () => {
 async function gainNewsList(config_data) {
   await queryNews(config_data).then(res => {
     if (res.code === 0) {
-      console.log("finttuning-embedding: ", res.data)
+      console.log("查询到的新闻文章：", res.data)
+      cardList.value = res.data["newsList"]
+      pageModel.total = res.data["totalRecords"]
     }
   })
 }
 
 
-const onSubmit = () => {
+const onSubmit = async () => {
   console.log('submit!')
+  await getNewsList()
 }
 
 
