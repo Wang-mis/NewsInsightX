@@ -19,7 +19,10 @@ coverage
 
 # server
 **/__pycache__
-**/datasets/
+**/datasets/pnews/
+**/datasets/**.csv
+**/datasets/**.db
+**/datasets/process.py
 
 
 # Editor directories and files
