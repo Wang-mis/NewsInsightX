@@ -138,7 +138,6 @@ class NewItem(Base):
 
 def queryNewsByKeyword(args):
     print(args)
-    args = {'keyword': '', 'date': '', 'page': 1, 'limit': 20, 'total': 0}
 
     page = args["page"]
     limit = args["limit"]
@@ -150,8 +149,7 @@ def queryNewsByKeyword(args):
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    query = session.query(NewItem).filter(NewItem.Content.ilike(keyword))  # ilike 忽略大小写
-    query = session.query(NewItem).filter(or_(NewItem.DTime == timerange, timerange == ''))
+    query = session.query(NewItem).filter(NewItem.Content.ilike(keyword)).filter(or_(NewItem.DTime == timerange, timerange == ''))
 
     totalRecords = len(query.all())
 
@@ -170,8 +168,8 @@ def queryNewsByKeyword(args):
             'Content': newItem.Content
         })
     
-    for newItem in newsList:
-        print(newItem)
+    # for newItem in newsList:
+    #     print(newItem)
     
     session.commit()
     session.close()
@@ -191,5 +189,7 @@ def test():
 
 if __name__ == '__main__':
     # test()
-    queryNewsByKeyword(args={})
+
+    # args = {'keyword': '', 'date': '', 'page': 1, 'limit': 20, 'total': 0}
+    # queryNewsByKeyword(args=args)
     pass

@@ -20,9 +20,7 @@
     </div>
 
     <div class="news-cards-container">
-
       <VNewCard :data="item" v-for="(item, index) in cardList"/>
-
     </div>
 
     <div class="demo-pagination-block">
@@ -43,7 +41,6 @@
 
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
-import { generateRandomString } from '@/utils/funcsUtil'
 import { queryNews } from '@/api/requestAPI'
 
 import { reactive, ref, onMounted } from 'vue'
@@ -72,13 +69,21 @@ const getNewsList = async () => {
 }
 
 async function gainNewsList(config_data) {
-  await queryNews(config_data).then(res => {
-    if (res.code === 0) {
-      console.log("查询到的新闻文章：", res.data)
-      cardList.value = res.data["newsList"]
-      pageModel.total = res.data["totalRecords"]
-    }
-  })
+  const res = await queryNews(config_data)
+
+  if (res.code === 0) {
+    console.log("查询到的新闻文章：", res.data);
+    cardList.value.length = 0
+    cardList.value.push(...res.data.newsList)
+    pageModel.total = res.data.totalRecords
+  }
+  // await queryNews(config_data).then(res => {
+  //   if (res.code === 0) {
+  //     console.log("查询到的新闻文章：", res.data)
+  //     cardList.value = res.data["newsList"]
+  //     pageModel.total = res.data["totalRecords"]
+  //   }
+  // })
 }
 
 
