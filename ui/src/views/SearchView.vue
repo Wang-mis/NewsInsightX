@@ -43,6 +43,9 @@
       />
     </div>
 
+    <!-- 回到顶部 -->
+    <el-backtop :right="50" :bottom="50" :visibility-height="10">UP</el-backtop>
+
   </div>
 </template>
 
