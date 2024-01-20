@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "lib": [ "es2015", "DOM" ]
+    },
+    "include": ["./src"],
+    "exclude": ["./node_modules"]
+}

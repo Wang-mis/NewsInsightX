@@ -3,7 +3,7 @@
     <div class="search-form-comtainer">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="关键词：">
-          <el-input v-model="formInline.user" placeholder="人物名称、热点词、热点事件" clearable />
+          <el-input v-model="formInline.keyword" placeholder="人物名称、热点词、热点事件" clearable />
         </el-form-item>
         <el-form-item label="时间点：">
           <el-date-picker
@@ -20,19 +20,20 @@
     </div>
 
     <div class="news-cards-container">
-
-      <VNewCard :data="item" v-for="(item, index) in cardList"/>
-
+      <!-- 加上div 每个card 大小自适应 -->
+      <div v-for="(item, index) in cardList" :key="index">
+        <VNewCard :data="item" />
+      </div>
     </div>
 
     <div class="demo-pagination-block">
       <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
+        v-model:current-page="pageModel.page"
+        v-model:page-size="pageModel.limit"
         :page-sizes="[20, 40, 80, 100]"
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="100"
+        :total="pageModel.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -43,41 +44,62 @@
 
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
-import { generateRandomString } from '../utils/funcsUtil'
+import { queryNews } from '@/api/requestAPI'
+import { deepCopy } from '@/utils/funcsUtil'
+import { reactive, ref, onMounted, watch } from 'vue'
 
-import { reactive, ref, onMounted } from 'vue'
-
-const cardList = ref<any>([])
+const cardList = ref([])
 
 const formInline = reactive({
-  user: '',
+  keyword: '',
   date: '',
 })
 
-const onSubmit = () => {
-  console.log('submit!')
-}
-
-onMounted(() => {
-  for(let i = 0; i < 20; i++) {
-    cardList.value.push({
-      id: generateRandomString(8),
-      title: "US Overtakes China as South Korea’s Top Export Market",
-      author: "Sam Kim and Hooyeon Kim",
-      time: "January 1, 2024 at 10:19 AM",
-      url: "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
-    })
-  }
+const pageModel = reactive({
+  page: 1, //默认当前页码
+  limit: 20, //默认每页的数量
+  total: 0 //返回的总记录数（未分页）
 })
 
-const currentPage = ref(1)
-const pageSize = ref(20)
+onMounted( async () => {
+  await getNewsList()
+})
 
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`)
+// 请求后端新闻文章
+const getNewsList = async () => {
+  const config_data = {...formInline, ...pageModel}
+  await gainNewsList(config_data)
 }
-const handleCurrentChange = (val: number) => {
+
+async function gainNewsList(config_data) {
+  await queryNews(config_data).then(res => {
+    if (res.code === 0) {
+      // 更新数组元素
+      cardList.value = res.data["newsList"]
+      console.log(cardList.value)
+      pageModel.total = res.data["totalRecords"]
+    }
+  })
+}
+
+
+const onSubmit = async () => {
+  console.log('submit!')
+  await getNewsList()
+}
+
+
+const handleSizeChange = async (val: number) => {  
+  pageModel.limit = val // 改变每页显示的条数
+  pageModel.page = 1 // 注意：在改变每页显示的条数时，要将页码显示到第一页
+  console.log(`${val} items per page`)
+  await getNewsList()
+}
+
+const handleCurrentChange = async (val: number) => {
+  pageModel.page = val // 改变页数
   console.log(`current page: ${val}`)
+  await getNewsList()
 }
 </script>
 

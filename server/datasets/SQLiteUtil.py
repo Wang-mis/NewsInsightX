@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DECIMAL, Float, Text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import or_
 import pandas as pd
 
 engine = create_engine('sqlite:///E:\\Projects\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
@@ -123,6 +124,60 @@ class NewItem(Base):
     MentionIdentifier = Column(String)
     Content = Column(Text)
 
+    def to_dict(self):
+        return {
+            'UniqueID': self.UniqueID,
+            'Title': self.Title,
+            'Author': self.Author,
+            'PTime': self.PTime,
+            'DTime': self.DTime,
+            'MentionSourceName': self.MentionSourceName,
+            'MentionIdentifier': self.MentionIdentifier,
+            'Content': self.Content
+        }
+
+def queryNewsByKeyword(args):
+    print(args)
+
+    page = args["page"]
+    limit = args["limit"]
+    offset_data = (page - 1) * limit
+
+    keyword = '%' + args["keyword"] + '%'
+    timerange = args["date"]
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    query = session.query(NewItem).filter(NewItem.Content.ilike(keyword)).filter(or_(NewItem.DTime == timerange, timerange == ''))
+
+    totalRecords = len(query.all())
+
+    results = query.offset(offset_data).limit(limit).all()
+
+    newsList = []
+    for newItem in results:
+        newsList.append({
+            'UniqueID': newItem.UniqueID,
+            'Title': newItem.Title,
+            'Author': newItem.Author,
+            'PTime': newItem.PTime,
+            'DTime': newItem.DTime,
+            'MentionSourceName': newItem.MentionSourceName,
+            'MentionIdentifier': newItem.MentionIdentifier,
+            'Content': newItem.Content
+        })
+    
+    # for newItem in newsList:
+    #     print(newItem)
+    
+    session.commit()
+    session.close()
+
+    return {
+        "totalRecords": totalRecords,
+        "newsList": newsList
+    }
 
 def test():
     # 写一条sql
@@ -133,5 +188,8 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    # test()
+
+    # args = {'keyword': '', 'date': '', 'page': 1, 'limit': 20, 'total': 0}
+    # queryNewsByKeyword(args=args)
     pass

@@ -10,6 +10,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@typescript-eslint/parser": "^6.19.0",
     "axios": "^1.6.2",
     "echarts": "^5.4.3",
     "element-plus": "^2.4.3",

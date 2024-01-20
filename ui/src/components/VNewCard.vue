@@ -2,44 +2,45 @@
 <template>
     <el-card shadow="hover" @click="handleCardClick">
         <div style="border-bottom: 1px dashed #cccccc;">
-            <el-icon class="new-item-icon"><Document /></el-icon>{{ data.title }}
+            <el-icon class="new-item-icon"><Document /></el-icon>{{ data.Title }}
         </div>
 
         <div class="new-item">
-            <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.author }}
+            <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.Author }}
         </div>
         <div class="new-item" style="color: #aaaaaa">
-            <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.time }}</span>
+            <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
         </div>
     </el-card>
 
 
     <el-dialog
         v-model="dialogVisible"
-        :title="data.title"
-        width="40%"
+        :title="data.Title"
+        width="60%"
         class="custom-dialog"
+        :lock-scroll="false"
         append-to-body
         @close="dialogVisible = false">
 
         <template #header>
             <div class="new-item" style="font-size: 20px; ">
-                <el-icon class="new-item-icon"><Document /></el-icon>{{ data.title }}
+                <el-icon class="new-item-icon"><Document /></el-icon>{{ data.Title }}
             </div>
         </template>
 
         <div style="display: flex;">
             <div class="new-item" style="margin-right: 1rem;">
-                <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.author }}
+                <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.Author }}
             </div>
             <div class="new-item" style="color: #aaaaaa">
-                <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.time }}</span>
+                <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
             </div>
         </div>
 
         <div class="new-item" style="color: #67C23A">
             <el-icon class="new-item-icon"><Link /></el-icon>
-                <el-link type="success" :href="data.url" target="_blank">{{ data.url }}</el-link>
+                <el-link type="success" :href="data.MentionIdentifier" target="_blank">{{ data.MentionIdentifier }}</el-link>
         </div>
 
         <div style="margin-top: 1rem;">
