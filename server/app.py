@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from utils.helper import ReturnWarningInfo, ReturnSuccessInfo
+from datasets.SQLiteUtil import queryNewsByKeyword
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -56,8 +57,8 @@ def user_test():
 @app.route("/querynews", methods=["POST"])
 @cross_origin()
 def queryNewsAPI():
-    data = request.get_json()
-    print(data)
+    
+    args = request.get_json()
 
     cardList = []
     for ele in range(20):
@@ -69,10 +70,12 @@ def queryNewsAPI():
             "url": "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
         })
     
-    data = {
-        "totalRecords": 300,
-        "newsList": cardList
-    }
+    # data = {
+    #     "totalRecords": 300,
+    #     "newsList": cardList
+    # }
+
+    data = queryNewsByKeyword(args=args)
 
     return ReturnSuccessInfo(data=data)
 
