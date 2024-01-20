@@ -21,7 +21,7 @@
 
     <div class="news-cards-container">
       <!-- 加上div 每个card 大小自适应 -->
-      <div v-for="(item, index) in cardList">
+      <div v-for="(item, index) in cardList" :key="index">
         <VNewCard :data="item" />
       </div>
     </div>
@@ -46,7 +46,7 @@
 import VNewCard from '../components/VNewCard.vue'
 import { queryNews } from '@/api/requestAPI'
 import { deepCopy } from '@/utils/funcsUtil'
-import { reactive, ref, onMounted, computed, watch, toRef } from 'vue'
+import { reactive, ref, onMounted, watch } from 'vue'
 
 const cardList = ref([])
 
@@ -74,9 +74,10 @@ const getNewsList = async () => {
 async function gainNewsList(config_data) {
   await queryNews(config_data).then(res => {
     if (res.code === 0) {
+      // 更新数组元素
       cardList.value = res.data["newsList"]
-      pageModel.total = res.data["totalRecords"]
       console.log(cardList.value)
+      pageModel.total = res.data["totalRecords"]
     }
   })
 }
