@@ -29,26 +29,21 @@
             </div>
         </template>
 
-        <div style="display: flex;">
-            <div class="new-item" style="margin-right: 1rem;">
+        <div style="display: flex; flex-direction: column;">
+            <div class="new-item">
                 <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.Author }}
             </div>
             <div class="new-item" style="color: #aaaaaa">
                 <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
             </div>
-        </div>
-
-        <div class="new-item" style="color: #67C23A">
-            <el-icon class="new-item-icon"><Link /></el-icon>
+            <div class="new-item" style="color: #67C23A">
+                <el-icon class="new-item-icon"><Link /></el-icon>
                 <el-link type="success" :href="data.MentionIdentifier" target="_blank">{{ data.MentionIdentifier }}</el-link>
+            </div>
         </div>
 
-        <div style="margin-top: 1rem;">
-            这是前端页面展示的新闻文章模版
-            这是前端页面展示的新闻文章模版
-            这是前端页面展示的新闻文章模版
-            这是前端页面展示的新闻文章模版
-            这是前端页面展示的新闻文章模版
+        <div style="margin-top: 0.7rem; white-space: pre-line;">
+            {{ data.Content }}
         </div>
 
     </el-dialog>
@@ -58,9 +53,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Avatar, Clock, Document, Link } from '@element-plus/icons-vue'
-const props = defineProps(['data'])
-const data = ref(props.data)
+// const props = defineProps(['data'])
+// const data = ref(props.data)
 
+// 牛逼 可以相应数据了
+defineProps({
+    data: {
+      type: Object,
+      required: true
+    }
+})
 const dialogVisible = ref(false)
 const handleCardClick = () => {
     console.log('Card clicked!')

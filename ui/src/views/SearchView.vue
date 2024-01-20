@@ -19,6 +19,10 @@
       </el-form>
     </div>
 
+    <div v-if="cardList.length < 1">
+      <el-empty description="暂无数据" :image-size="200" />
+    </div>
+
     <div class="news-cards-container">
       <!-- 加上div 每个card 大小自适应 -->
       <div v-for="(item, index) in cardList" :key="index">
@@ -38,6 +42,9 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <!-- 回到顶部 -->
+    <el-backtop :right="50" :bottom="50" :visibility-height="10">UP</el-backtop>
 
   </div>
 </template>
@@ -85,6 +92,7 @@ async function gainNewsList(config_data) {
 
 const onSubmit = async () => {
   console.log('submit!')
+  pageModel.page = 1 // 注意：在查询时，要将页码显示到第一页
   await getNewsList()
 }
 
