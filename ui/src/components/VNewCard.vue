@@ -17,8 +17,9 @@
     <el-dialog
         v-model="dialogVisible"
         :title="data.Title"
-        width="40%"
+        width="60%"
         class="custom-dialog"
+        :lock-scroll="false"
         append-to-body
         @close="dialogVisible = false">
 

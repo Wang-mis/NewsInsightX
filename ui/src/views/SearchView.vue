@@ -20,7 +20,10 @@
     </div>
 
     <div class="news-cards-container">
-      <VNewCard :data="item" v-for="(item, index) in cardList"/>
+      <!-- 加上div 每个card 大小自适应 -->
+      <div v-for="(item, index) in cardList">
+        <VNewCard :data="item" />
+      </div>
     </div>
 
     <div class="demo-pagination-block">
@@ -42,10 +45,10 @@
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
 import { queryNews } from '@/api/requestAPI'
+import { deepCopy } from '@/utils/funcsUtil'
+import { reactive, ref, onMounted, computed, watch, toRef } from 'vue'
 
-import { reactive, ref, onMounted } from 'vue'
-
-const cardList = ref<any>([])
+const cardList = ref([])
 
 const formInline = reactive({
   keyword: '',
@@ -69,21 +72,13 @@ const getNewsList = async () => {
 }
 
 async function gainNewsList(config_data) {
-  const res = await queryNews(config_data)
-
-  if (res.code === 0) {
-    console.log("查询到的新闻文章：", res.data);
-    cardList.value.length = 0
-    cardList.value.push(...res.data.newsList)
-    pageModel.total = res.data.totalRecords
-  }
-  // await queryNews(config_data).then(res => {
-  //   if (res.code === 0) {
-  //     console.log("查询到的新闻文章：", res.data)
-  //     cardList.value = res.data["newsList"]
-  //     pageModel.total = res.data["totalRecords"]
-  //   }
-  // })
+  await queryNews(config_data).then(res => {
+    if (res.code === 0) {
+      cardList.value = res.data["newsList"]
+      pageModel.total = res.data["totalRecords"]
+      console.log(cardList.value)
+    }
+  })
 }
 
 
