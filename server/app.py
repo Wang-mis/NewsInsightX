@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flask_cors import CORS, cross_origin
+from utils.helper import ReturnWarningInfo, ReturnSuccessInfo
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 cors = CORS(app)
 app.config['CORS_HEADER'] = 'Content-Type'
+
 
 @app.route("/user/login", methods=["POST"])
 @cross_origin()
@@ -17,19 +19,9 @@ def user_login():
     username = data.get("username")
     password = data.get("password")
     if username == "admin" and password == "123456":
-        return jsonify({
-            "code": 0,
-            "type": "success",
-            "data": {
-                "token": "666666"
-            }
-        })
-    else:
-        return jsonify({
-            "code": 20010,
-            "type": "warning",
-            "msg": "用户名或密码错误"
-        })
+        return ReturnSuccessInfo(data={ "token": "666666" })
+    
+    return ReturnWarningInfo()
 
 
 @app.route("/user/info", methods=["GET", "POST"])
@@ -41,22 +33,9 @@ def user_info():
     """
     token = request.headers.get("token")
     if token == "hdjhs__token":
-        return jsonify({
-            "code": 0,
-            "type": "success",
-            "msg": "success",
-            "data": {
-                "id": "1",
-                "userName": "admin",
-                "realName": "张三",
-                "userType": 1
-            }
-        })
-    return jsonify({
-        "code": 20010,
-        "type": "warning",
-        "msg": "token不存在或已过期"
-    })
+        return ReturnSuccessInfo(data={ "id": "1", "userName": "admin", "realName": "张三", "userType": 1 })
+    
+    return ReturnWarningInfo()
 
 
 @app.route("/user/test", methods=["POST"])
@@ -69,21 +48,9 @@ def user_test():
     print(data)
     test_arg = data.get("test_arg")
     if test_arg == "test_arg":
-        return jsonify({
-            "code": 0,
-            "type": "success",
-            "msg": "success",
-            "data": {
-                "id": "1",
-                "arr": [1,2,3]
-            }
-        })
+        return ReturnSuccessInfo(data={ "id": "1", "arr": [1,2,3] })
     
-    return jsonify({
-        "code": 20010,
-        "type": "warning",
-        "msg": "搞错了。。。"
-    })
+    return ReturnWarningInfo()
 
 
 if __name__ == '__main__':

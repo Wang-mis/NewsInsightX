@@ -17,6 +17,14 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
+# server
+**/__pycache__
+**/datasets/pnews/
+**/datasets/**.csv
+**/datasets/**.db
+**/datasets/process.py
+
+
 # Editor directories and files
 .vscode
 !.vscode/extensions.json
