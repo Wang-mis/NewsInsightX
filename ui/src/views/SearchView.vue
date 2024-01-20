@@ -85,6 +85,7 @@ async function gainNewsList(config_data) {
 
 const onSubmit = async () => {
   console.log('submit!')
+  pageModel.page = 1 // 注意：在查询时，要将页码显示到第一页
   await getNewsList()
 }
 
