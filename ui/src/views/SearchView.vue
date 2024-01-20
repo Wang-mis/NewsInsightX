@@ -56,9 +56,9 @@ const formInline = reactive({
 })
 
 const pageModel = reactive({
-  page: 1,//默认当前页码
-  limit: 20,//默认每页的数量
-  total: 0//返回的总记录数（未分页）
+  page: 1, //默认当前页码
+  limit: 20, //默认每页的数量
+  total: 0 //返回的总记录数（未分页）
 })
 
 onMounted( async () => {
@@ -88,13 +88,17 @@ const onSubmit = async () => {
 }
 
 
-const handleSizeChange = (val: number) => {
-  pageModel.limit = val
+const handleSizeChange = async (val: number) => {  
+  pageModel.limit = val // 改变每页显示的条数
+  pageModel.page = 1 // 注意：在改变每页显示的条数时，要将页码显示到第一页
   console.log(`${val} items per page`)
+  await getNewsList()
 }
-const handleCurrentChange = (val: number) => {
-  pageModel.page = val
+
+const handleCurrentChange = async (val: number) => {
+  pageModel.page = val // 改变页数
   console.log(`current page: ${val}`)
+  await getNewsList()
 }
 </script>
 
