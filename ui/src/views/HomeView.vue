@@ -5,7 +5,8 @@
       这里做一些卡片展示、当前时间、系统展示的数据时间段
     </el-card>
   </div>
-  <div class="card-container">
+
+  <div class="card-container" v-if="homeStatistics!==null">
     <el-card>
       <template #header>
         <div class="card-header">
@@ -13,7 +14,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts />
+        <VBarCharts :vdata="homeStatistics['ActorCountryCode']"/>
       </div>
     </el-card>
 
@@ -24,7 +25,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts />
+        <VBarCharts :vdata="homeStatistics['MentionSourceName']"/>
       </div>
     </el-card>
 
@@ -35,7 +36,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts />
+        <VBarCharts :vdata="homeStatistics['EventRootCode']"/>
       </div>
     </el-card>
 
@@ -46,7 +47,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts />
+        <VBarCharts :vdata="homeStatistics['MentionDocTone']"/>
       </div>
     </el-card>
 
@@ -55,7 +56,36 @@
 
 <script setup lang="ts">
 import VBarCharts from '../components/VBarCharts.vue'
+import { queryHomeStatistics } from '@/api/requestAPI'
+import { deepCopy } from '@/utils/funcsUtil'
+import { reactive, ref, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
+const store = useStore()
 
+const homeStatistics = computed({
+  get: () => store.state.homeStatistics,
+  set: (value) => {
+    throw new Error("homeStatistics is a read-only computed property.");
+  },
+});
+
+onMounted( async () => {
+  await getHomeStatistics()
+})
+
+// 请求后端首页统计信息
+const getHomeStatistics = async () => {
+  await gainHomeStatistics()
+}
+
+async function gainHomeStatistics() {
+  await queryHomeStatistics().then(res => {
+    if (res.code === 0) {
+      console.log(res.data) // MentionSourceName
+      store.commit("updateHomeStatistics", deepCopy(res.data))
+    }
+  })
+}
 
 </script>
 <style lang="scss" scoped>
