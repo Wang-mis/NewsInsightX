@@ -19,13 +19,13 @@
       </el-form>
     </div>
 
-    <div v-if="cardList.length < 1">
+    <div v-if="newsList.length < 1">
       <el-empty description="暂无数据" :image-size="200" />
     </div>
 
     <div class="news-cards-container">
       <!-- 加上div 每个card 大小自适应 -->
-      <div v-for="(item, index) in cardList" :key="index">
+      <div v-for="(item, index) in newsList" :key="index">
         <VNewCard :data="item" />
       </div>
     </div>
@@ -53,9 +53,16 @@
 import VNewCard from '../components/VNewCard.vue'
 import { queryNews } from '@/api/requestAPI'
 import { deepCopy } from '@/utils/funcsUtil'
-import { reactive, ref, onMounted, watch } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
+const store = useStore()
 
-const cardList = ref([])
+const newsList = computed({
+  get: () => store.state.newsList,
+  set: (value) => {
+    throw new Error("newsList is a read-only computed property.");
+  },
+});
 
 const formInline = reactive({
   keyword: '',
@@ -82,8 +89,7 @@ async function gainNewsList(config_data) {
   await queryNews(config_data).then(res => {
     if (res.code === 0) {
       // 更新数组元素
-      cardList.value = res.data["newsList"]
-      console.log(cardList.value)
+      store.commit("updateNewsList", deepCopy(res.data["newsList"]))
       pageModel.total = res.data["totalRecords"]
     }
   })

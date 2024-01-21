@@ -12,6 +12,7 @@ const store = createStore({
     mutations:{
         updateNewsList(state, message) {
             state.newsList = message
+            // console.log(state.newsList)
         },
     }
 })
