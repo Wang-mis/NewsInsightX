@@ -227,6 +227,17 @@ def queryStatistics():
     print(result_new)
 
 
+    data["NewsProportion"] = []
+    data["NewsProportion"].append({
+        "value": len(df_new),
+        "name": "News With Content"
+    })
+    data["NewsProportion"].append({
+        "value": len(df_merge) - len(df_new),
+        "name": "News Without Content"
+    })
+
+
     # ans = {}
     # ans["keys"] = list(result_merge.keys())
     # ans["sum"] = list(result_merge.values())

@@ -48,16 +48,18 @@ const drawChart = (data) => {
       },
       legend: {
         top: '5%',
-        left: 'center'
+        left: 'left',
+        orient: 'vertical',
       },
       series: [
         {
-          name: 'Access From',
+          // name: 'Access From',
           type: 'pie',
-          radius: ['40%', '70%'],
+          radius: ['30%', '95%'],
+          // radius: '50%',
           avoidLabelOverlap: false,
           itemStyle: {
-            borderRadius: 10,
+            borderRadius: 5,
             borderColor: '#fff',
             borderWidth: 2
           },

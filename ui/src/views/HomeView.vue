@@ -7,6 +7,19 @@
   </div>
 
   <div class="card-container" v-if="homeStatistics!==null">
+
+    <el-card body-style="padding: 0;">
+      <template #header>
+        <div class="card-header">
+          <h3>已有文章新闻占比</h3>
+        </div>
+      </template>
+      <div class="chart">
+        <VPieCharts :vdata="homeStatistics['NewsProportion']"/>
+      </div>
+    </el-card>
+
+
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
