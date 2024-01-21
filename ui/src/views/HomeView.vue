@@ -11,7 +11,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>已有文章新闻占比</h3>
+          <h3>已有新闻文章占比</h3>
         </div>
       </template>
       <div class="chart">
