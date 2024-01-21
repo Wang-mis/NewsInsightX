@@ -158,6 +158,7 @@ def queryNewsByKeyword(args):
     newsList = []
     for newItem in results:
         newsList.append({
+            'AutoId': newItem.AutoId,
             'UniqueID': newItem.UniqueID,
             'Title': newItem.Title,
             'Author': newItem.Author,

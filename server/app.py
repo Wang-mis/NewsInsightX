@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
-from utils.helper import ReturnWarningInfo, ReturnSuccessInfo
+from utils.helper import ReturnWarningInfo, ReturnSuccessInfo, getEventRootCodeExplain
 from datasets.SQLiteUtil import queryNewsByKeyword
 
 app = Flask(__name__)
@@ -57,27 +57,49 @@ def user_test():
 @app.route("/querynews", methods=["POST"])
 @cross_origin()
 def queryNewsAPI():
-    
     args = request.get_json()
+    try:
+        data = queryNewsByKeyword(args=args)
+        return ReturnSuccessInfo(data=data)
+    except Exception as e:
+        print(e)
+    return ReturnWarningInfo()
 
-    cardList = []
-    for ele in range(20):
-        cardList.append({
-            "id": "zIISJIASnlkj",
-            "title": "US Overtakes China as South Korea’s Top Export Market",
-            "author": "Sam Kim and Hooyeon Kim",
-            "time": "January 1, 2024 at 10:19 AM",
-            "url": "https://finance.yahoo.com/news/us-overtakes-china-south-korea-021922764.html"
-        })
-    
-    # data = {
-    #     "totalRecords": 300,
-    #     "newsList": cardList
-    # }
 
-    data = queryNewsByKeyword(args=args)
-
+@app.route("/homepage", methods=["GET"])
+@cross_origin()
+def queryHomeStatisticsAPI():
+    data = {
+        "MentionSourceName": [
+            { "value": 1048, "name": 'bbc.com' },
+            { "value": 735, "name": 'bbc.co.uk' },
+            { "value": 580, "name": 'yahoo.com' },
+            { "value": 484, "name": 'cnn.com' },
+            { "value": 300, "name": 'nytime.com' }
+        ],
+        "ActorCountryCode": [
+            { "value": 1048, "name": 'UKR' },
+            { "value": 735, "name": 'USA' },
+            { "value": 580, "name": 'GBR' },
+            { "value": 484, "name": 'EUR' },
+            { "value": 300, "name": 'RUS' }
+        ],
+        "EventRootCode": [
+            { "value": 1048, "name": getEventRootCodeExplain(1)["concise"] },
+            { "value": 735, "name": getEventRootCodeExplain(2)["concise"] },
+            { "value": 580, "name": getEventRootCodeExplain(3)["concise"] },
+            { "value": 484, "name": getEventRootCodeExplain(4)["concise"] },
+            { "value": 300, "name": getEventRootCodeExplain(5)["concise"] }
+        ],
+        "MentionDocTone": [
+            { "value": 1048, "name": 'POS' },
+            { "value": 735, "name": 'NEG' },
+            { "value": 580, "name": 'NEU' }
+        ],
+    }
     return ReturnSuccessInfo(data=data)
+
+
 
 if __name__ == '__main__':
     print('run 0.0.0.0:14449')
