@@ -14,7 +14,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['ActorCountryCode']"/>
+        <VPieCharts :vdata="homeStatistics['ActorCountryCode']"/>
       </div>
     </el-card>
 
@@ -25,7 +25,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['MentionSourceName']"/>
+        <VPieCharts :vdata="homeStatistics['MentionSourceName']"/>
       </div>
     </el-card>
 
@@ -36,7 +36,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['EventRootCode']"/>
+        <VPieCharts :vdata="homeStatistics['EventRootCode']"/>
       </div>
     </el-card>
 
@@ -47,7 +47,7 @@
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['MentionDocTone']"/>
+        <VPieCharts :vdata="homeStatistics['MentionDocTone']"/>
       </div>
     </el-card>
 
@@ -55,7 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import VBarCharts from '../components/VBarCharts.vue'
+import VPieCharts from '../components/VPieCharts.vue'
+// import VBarCharts from '@/components/VBarCharts.vue'
 import { queryHomeStatistics } from '@/api/requestAPI'
 import { deepCopy } from '@/utils/funcsUtil'
 import { reactive, ref, onMounted, computed } from 'vue'

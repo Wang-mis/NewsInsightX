@@ -9,20 +9,21 @@
 import * as echarts from "echarts"
 import { ref, onMounted } from "vue"
 
-const props = defineProps({
-  vdata: {
-    type: Object,
-    required: true
-  }
-})
+// const props = defineProps({
+//   vdata: {
+//     type: Object,
+//     required: true
+//   }
+// })
 
 const chart = ref()
 
 onMounted(()=>{
-  drawChart(props.vdata)
+  drawChart()
+  // drawChart(props.vdata)
 })
 
-const drawChart = (data) => {
+const drawChart = () => {
   const myChart = echarts.init(chart.value)
     console.log(myChart)
     // 图标自适应
@@ -35,42 +36,44 @@ const drawChart = (data) => {
     )
     
     const options = {
-      tooltip: {
-        trigger: 'item'
+      legend: {},
+      tooltip: {},
+      grid:{
+        top: "30px",
+        left: "12px",
+        right: "12px",
+        bottom: "12px",
+        containLabel: true
       },
-      legend: {
-        top: '5%',
-        left: 'center'
+      dataset: {
+        dimensions: ['MentionSourceName', 'AllNews', 'CrawlNews', 'WaitNews'],
+        source: [
+            {'MentionSourceName': 'bbc.co.uk', 'AllNews': 12, 'CrawlNews': 12, 'WaitNews': 0}, 
+            {'MentionSourceName': 'bbc.com', 'AllNews': 16, 'CrawlNews': 15, 'WaitNews': 1}, 
+            {'MentionSourceName': 'cnn.com', 'AllNews': 21, 'CrawlNews': 19, 'WaitNews': 2}, 
+            {'MentionSourceName': 'dailymail.co.uk', 'AllNews': 27, 'CrawlNews': 0, 'WaitNews': 27}, 
+            {'MentionSourceName': 'europesun.com', 'AllNews': 1, 'CrawlNews': 0, 'WaitNews': 1}, 
+            {'MentionSourceName': 'foxnews.com', 'AllNews': 14, 'CrawlNews': 0, 'WaitNews': 14}, 
+            {'MentionSourceName': 'nytimes.com', 'AllNews': 8, 'CrawlNews': 0, 'WaitNews': 8}, 
+            {'MentionSourceName': 'washingtonpost.com', 'AllNews': 7, 'CrawlNews': 0, 'WaitNews': 7}, 
+            {'MentionSourceName': 'yahoo.com', 'AllNews': 315, 'CrawlNews': 315, 'WaitNews': 0}
+          ]
       },
-      series: [
-        {
-          name: 'Access From',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 40,
-              fontWeight: 'bold'
-            }
-          },
-          labelLine: {
-            show: false
-          },
-          data: data
+      xAxis: { 
+        type: 'category',
+        splitLine: {
+          show:false
         }
-      ]
-    }
+      },
+      yAxis: {
+        splitLine: {
+          show:false
+        }
+      },
+      // Declare several bar series, each will be mapped
+      // to a column of dataset.source by default.
+      series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
+    };
 
     myChart.setOption(options)
 }
