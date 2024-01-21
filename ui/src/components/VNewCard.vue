@@ -66,7 +66,7 @@ import { Avatar, Clock, Document, Link, Printer } from '@element-plus/icons-vue'
 // const props = defineProps(['data'])
 // const data = ref(props.data)
 
-// 牛逼 可以相应数据了
+// 牛逼 可以响应数据了
 defineProps({
     data: {
       type: Object,

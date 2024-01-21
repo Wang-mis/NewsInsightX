@@ -1,7 +1,3 @@
-<script setup>
-import VBarCharts from '../components/VBarCharts.vue'
-</script>
-
 <template>
   <div class="intro-container">
     <el-card>这里做一些简介</el-card>
@@ -57,6 +53,11 @@ import VBarCharts from '../components/VBarCharts.vue'
   </div>
 </template>
 
+<script setup lang="ts">
+import VBarCharts from '../components/VBarCharts.vue'
+
+
+</script>
 <style lang="scss" scoped>
 // .card-header {
 //   color: steelblue;
