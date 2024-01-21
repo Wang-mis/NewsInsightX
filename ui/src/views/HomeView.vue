@@ -7,7 +7,7 @@
   </div>
 
   <div class="card-container" v-if="homeStatistics!==null">
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>各个国家的新闻统计</h3>
@@ -18,7 +18,7 @@
       </div>
     </el-card>
 
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>各个媒体的新闻统计</h3>
@@ -29,7 +29,7 @@
       </div>
     </el-card>
 
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>各个类型的新闻统计</h3>
@@ -40,7 +40,7 @@
       </div>
     </el-card>
 
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>积极/消极的新闻统计</h3>
@@ -106,6 +106,6 @@ async function gainHomeStatistics() {
 }
 .chart {
   width: 100%;
-  height: 350px;
+  height: 230px;
 }
 </style>
