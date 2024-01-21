@@ -11,7 +11,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>各个国家的新闻统计 TOP16</h3>
+          <h3>各个国家的新闻统计 <el-tag>TOP16</el-tag></h3>
           <el-tag type="info" size="large" effect="dark">
             <h2>ActorCountryCode</h2>
           </el-tag>
@@ -25,7 +25,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>各个媒体的新闻统计 TOP8</h3>
+          <h3>各个媒体的新闻统计 <el-tag>TOP8</el-tag></h3>
           <el-tag type="info" size="large" effect="dark">
             <h2>MentionSourceName</h2>
           </el-tag>
@@ -39,7 +39,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>各个类型的新闻统计 TOP8</h3>
+          <h3>各个类型的新闻统计 <el-tag>TOP8</el-tag></h3>
           <el-tag type="info" size="large" effect="dark">
             <h2>EventRootCode</h2>
           </el-tag>

@@ -156,7 +156,7 @@ def queryNewsByKeyword(args):
 
     totalRecords = len(query.all())
 
-    results = query.offset(offset_data).limit(limit).all()
+    results = query.order_by(NewItem.DTime.desc()).offset(offset_data).limit(limit).all()
 
     newsList = []
     for newItem in results:
