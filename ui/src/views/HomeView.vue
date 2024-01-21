@@ -7,47 +7,60 @@
   </div>
 
   <div class="card-container" v-if="homeStatistics!==null">
-    <el-card>
+
+    <el-card body-style="padding: 0;">
+      <template #header>
+        <div class="card-header">
+          <h3>已有新闻文章占比</h3>
+        </div>
+      </template>
+      <div class="chart">
+        <VPieCharts :vdata="homeStatistics['NewsProportion']"/>
+      </div>
+    </el-card>
+
+
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>各个国家的新闻统计</h3>
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['ActorCountryCode']"/>
+        <VPieCharts :vdata="homeStatistics['ActorCountryCode']"/>
       </div>
     </el-card>
 
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>各个媒体的新闻统计</h3>
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['MentionSourceName']"/>
+        <VPieCharts :vdata="homeStatistics['MentionSourceName']"/>
       </div>
     </el-card>
 
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>各个类型的新闻统计</h3>
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['EventRootCode']"/>
+        <VPieCharts :vdata="homeStatistics['EventRootCode']"/>
       </div>
     </el-card>
 
-    <el-card>
+    <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
           <h3>积极/消极的新闻统计</h3>
         </div>
       </template>
       <div class="chart">
-        <VBarCharts :vdata="homeStatistics['MentionDocTone']"/>
+        <VPieCharts :vdata="homeStatistics['MentionDocTone']"/>
       </div>
     </el-card>
 
@@ -55,7 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import VBarCharts from '../components/VBarCharts.vue'
+import VPieCharts from '../components/VPieCharts.vue'
+// import VBarCharts from '@/components/VBarCharts.vue'
 import { queryHomeStatistics } from '@/api/requestAPI'
 import { deepCopy } from '@/utils/funcsUtil'
 import { reactive, ref, onMounted, computed } from 'vue'
@@ -106,6 +120,6 @@ async function gainHomeStatistics() {
 }
 .chart {
   width: 100%;
-  height: 350px;
+  height: 230px;
 }
 </style>

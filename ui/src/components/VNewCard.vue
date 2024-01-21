@@ -11,8 +11,8 @@
         <div class="new-item" style="color: #aaaaaa">
             <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
         </div>
-        <div class="new-item">
-            <el-icon class="new-item-icon"><Printer /></el-icon> {{ data.MentionSourceName }}
+        <div class="new-item" style="color: #aaaaaa">
+            <el-icon class="new-item-icon"><Printer /></el-icon><span class="post-meta"> {{ data.MentionSourceName }} </span>
         </div>
     </el-card>
 

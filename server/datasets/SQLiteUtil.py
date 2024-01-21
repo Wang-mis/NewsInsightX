@@ -4,6 +4,8 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import or_
 import pandas as pd
+from utils.helper import getEventRootCodeExplain
+
 
 engine = create_engine('sqlite:///E:\\Projects\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
 
@@ -179,6 +181,93 @@ def queryNewsByKeyword(args):
         "totalRecords": totalRecords,
         "newsList": newsList
     }
+
+# 返回首页统计信息
+def queryStatistics():
+    data = {
+        "MentionSourceName": [
+            { "value": 1048, "name": 'bbc.com' },
+            { "value": 735, "name": 'bbc.co.uk' },
+            { "value": 580, "name": 'yahoo.com' },
+            { "value": 484, "name": 'cnn.com' },
+            { "value": 300, "name": 'nytime.com' }
+        ],
+        "ActorCountryCode": [
+            { "value": 1048, "name": 'UKR' },
+            { "value": 735, "name": 'USA' },
+            { "value": 580, "name": 'GBR' },
+            { "value": 484, "name": 'EUR' },
+            { "value": 300, "name": 'RUS' }
+        ],
+        "EventRootCode": [
+            { "value": 1048, "name": getEventRootCodeExplain(1)["concise"] },
+            { "value": 735, "name": getEventRootCodeExplain(2)["concise"] },
+            { "value": 580, "name": getEventRootCodeExplain(3)["concise"] },
+            { "value": 484, "name": getEventRootCodeExplain(4)["concise"] },
+            { "value": 300, "name": getEventRootCodeExplain(5)["concise"] }
+        ],
+        "MentionDocTone": [
+            { "value": 1048, "name": 'POS' },
+            { "value": 735, "name": 'NEG' },
+            { "value": 580, "name": 'NEU' }
+        ],
+    }
+
+    sql_merge = "SELECT * FROM merge_table"
+    df_merge = pd.read_sql_query(sql_merge, engine)
+    # print(df_merge)
+    result_merge = df_merge.groupby("MentionSourceName").size().to_dict()
+    print(result_merge)
+
+
+    sql_new = "SELECT * FROM new_table"
+    df_new = pd.read_sql_query(sql_new, engine)
+    # print(df_new)
+    result_new = df_new.groupby("MentionSourceName").size().to_dict()
+    print(result_new)
+
+
+    data["NewsProportion"] = []
+    data["NewsProportion"].append({
+        "value": len(df_new),
+        "name": "News With Content"
+    })
+    data["NewsProportion"].append({
+        "value": len(df_merge) - len(df_new),
+        "name": "News Without Content"
+    })
+
+
+    # ans = {}
+    # ans["keys"] = list(result_merge.keys())
+    # ans["sum"] = list(result_merge.values())
+    # ans["gain"] = []
+    # ans["wait"] = []
+    # for index, key in enumerate(ans["keys"]):
+    #     if key in result_new.keys():
+    #         ans["gain"].append(result_new[key])
+    #     else:
+    #         ans["gain"].append(0)
+        
+    #     ans["wait"].append(ans["sum"][index] - ans["gain"][index])
+    # print(ans)
+
+    ans = []
+    for media in list(result_merge.keys()):
+        tmp = {
+            "MentionSourceName": media,
+            "AllNews": result_merge[media],
+            "CrawlNews": result_new[media] if media in result_new.keys() else 0
+        }
+        tmp["WaitNews"] = tmp["AllNews"] - tmp["CrawlNews"]
+        ans.append(tmp)
+    
+    print(ans)
+
+
+
+    return data
+
 
 def test():
     # 写一条sql
