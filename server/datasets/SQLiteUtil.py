@@ -4,7 +4,8 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import or_
 import pandas as pd
-from utils.helper import getEventRootCodeExplain
+from utils.helper import getEventRootCodeExplain, sortCustomDict
+from collections import Counter
 
 
 engine = create_engine('sqlite:///E:\\Projects\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
@@ -215,54 +216,82 @@ def queryStatistics():
 
     sql_merge = "SELECT * FROM merge_table"
     df_merge = pd.read_sql_query(sql_merge, engine)
-    # print(df_merge)
+    
     result_merge = df_merge.groupby("MentionSourceName").size().to_dict()
     print(result_merge)
 
 
     sql_new = "SELECT * FROM new_table"
     df_new = pd.read_sql_query(sql_new, engine)
-    # print(df_new)
+    
     result_new = df_new.groupby("MentionSourceName").size().to_dict()
     print(result_new)
 
+    df_inner = pd.merge(df_merge, df_new, how='inner', on='UniqueID')
 
+    # NewsProportion
     data["NewsProportion"] = []
     data["NewsProportion"].append({
         "value": len(df_new),
-        "name": "News With Content"
+        "name": "With Content"
     })
     data["NewsProportion"].append({
         "value": len(df_merge) - len(df_new),
-        "name": "News Without Content"
+        "name": "Without Content"
     })
 
-
-    # ans = {}
-    # ans["keys"] = list(result_merge.keys())
-    # ans["sum"] = list(result_merge.values())
-    # ans["gain"] = []
-    # ans["wait"] = []
-    # for index, key in enumerate(ans["keys"]):
-    #     if key in result_new.keys():
-    #         ans["gain"].append(result_new[key])
-    #     else:
-    #         ans["gain"].append(0)
-        
-    #     ans["wait"].append(ans["sum"][index] - ans["gain"][index])
-    # print(ans)
-
-    ans = []
-    for media in list(result_merge.keys()):
-        tmp = {
-            "MentionSourceName": media,
-            "AllNews": result_merge[media],
-            "CrawlNews": result_new[media] if media in result_new.keys() else 0
-        }
-        tmp["WaitNews"] = tmp["AllNews"] - tmp["CrawlNews"]
-        ans.append(tmp)
+    # MentionSourceName
+    data["MentionSourceName"] = []
+    sorted_dict = sortCustomDict(result_new)
+    for key, value in sorted_dict.items():
+        data["MentionSourceName"].append({
+            "value": value,
+            "name": key
+        })
+        if len(data["MentionSourceName"]) > 7:
+            break
     
-    print(ans)
+    # ActorCountryCode
+    actorcountrycode = df_inner["Actor1CountryCode"].to_list() + df_inner["Actor2CountryCode"].to_list()
+    sorted_dict = sortCustomDict(dict(Counter(actorcountrycode)))
+    data["ActorCountryCode"] = []
+    for key, value in sorted_dict.items():
+        data["ActorCountryCode"].append({
+            "value": value,
+            "name": key
+        })
+        if len(data["ActorCountryCode"]) > 15:
+            break
+    
+    # EventRootCode
+    eventrootcode = df_inner["EventRootCode"].to_list()
+    sorted_dict = sortCustomDict(dict(Counter(eventrootcode)))
+    data["EventRootCode"] = []
+    for key, value in sorted_dict.items():
+        data["EventRootCode"].append({
+            "value": value,
+            "name": getEventRootCodeExplain(int(key))["concise"]
+        })
+        if len(data["EventRootCode"]) > 7:
+            break
+
+    # MentionDocTone
+    positive_count = len(df_inner[df_inner['MentionDocTone'] > 0])
+    negative_count = len(df_inner[df_inner['MentionDocTone'] < 0])
+    neutral_count = len(df_inner) - positive_count - negative_count
+    mentiondoctone = {
+        "POS": positive_count,
+        "NEU": neutral_count,
+        "NEG": negative_count,
+    }
+    sorted_dict = sortCustomDict(mentiondoctone)
+    data["MentionDocTone"] = []
+    for key, value in sorted_dict.items():
+        data["MentionDocTone"].append({
+            "value": value,
+            "name": key
+        })
+
 
 
 
