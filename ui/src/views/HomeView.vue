@@ -11,19 +11,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>已有新闻文章占比</h3>
-        </div>
-      </template>
-      <div class="chart">
-        <VPieCharts :vdata="homeStatistics['NewsProportion']"/>
-      </div>
-    </el-card>
-
-
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>各个国家的新闻统计</h3>
+          <h3>各个国家的新闻统计 TOP16</h3>
         </div>
       </template>
       <div class="chart">
@@ -34,7 +22,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>各个媒体的新闻统计</h3>
+          <h3>各个媒体的新闻统计 TOP8</h3>
         </div>
       </template>
       <div class="chart">
@@ -45,7 +33,7 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>各个类型的新闻统计</h3>
+          <h3>各个类型的新闻统计 TOP8</h3>
         </div>
       </template>
       <div class="chart">
@@ -61,6 +49,17 @@
       </template>
       <div class="chart">
         <VPieCharts :vdata="homeStatistics['MentionDocTone']"/>
+      </div>
+    </el-card>
+
+    <el-card body-style="padding: 0;">
+      <template #header>
+        <div class="card-header">
+          <h3>已有新闻文章占比</h3>
+        </div>
+      </template>
+      <div class="chart">
+        <VPieCharts :vdata="homeStatistics['NewsProportion']"/>
       </div>
     </el-card>
 
