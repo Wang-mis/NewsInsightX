@@ -64,6 +64,7 @@ const drawChart = (data) => {
             borderWidth: 2
           },
           label: {
+            formatter: '{b}({d}%)',
             show: false,
             position: 'center'
           },

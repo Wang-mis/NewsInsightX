@@ -12,6 +12,9 @@
       <template #header>
         <div class="card-header">
           <h3>各个国家的新闻统计 TOP16</h3>
+          <el-tag type="info" size="large" effect="dark">
+            <h2>ActorCountryCode</h2>
+          </el-tag>
         </div>
       </template>
       <div class="chart">
@@ -23,6 +26,9 @@
       <template #header>
         <div class="card-header">
           <h3>各个媒体的新闻统计 TOP8</h3>
+          <el-tag type="info" size="large" effect="dark">
+            <h2>MentionSourceName</h2>
+          </el-tag>
         </div>
       </template>
       <div class="chart">
@@ -34,6 +40,9 @@
       <template #header>
         <div class="card-header">
           <h3>各个类型的新闻统计 TOP8</h3>
+          <el-tag type="info" size="large" effect="dark">
+            <h2>EventRootCode</h2>
+          </el-tag>
         </div>
       </template>
       <div class="chart">
@@ -45,6 +54,9 @@
       <template #header>
         <div class="card-header">
           <h3>积极/消极的新闻统计</h3>
+          <el-tag type="info" size="large" effect="dark">
+            <h2>MentionDocTone</h2>
+          </el-tag>
         </div>
       </template>
       <div class="chart">
@@ -56,6 +68,9 @@
       <template #header>
         <div class="card-header">
           <h3>已有新闻文章占比</h3>
+          <el-tag type="info" size="large" effect="dark">
+            <h2>NewsProportion</h2>
+          </el-tag>
         </div>
       </template>
       <div class="chart">
@@ -102,9 +117,11 @@ async function gainHomeStatistics() {
 
 </script>
 <style lang="scss" scoped>
-// .card-header {
-//   color: steelblue;
-// }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .intro-container {
   margin-top: 1rem;
   display: grid;
