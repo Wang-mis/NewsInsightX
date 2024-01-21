@@ -11,6 +11,9 @@
         <div class="new-item" style="color: #aaaaaa">
             <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
         </div>
+        <div class="new-item">
+            <el-icon class="new-item-icon"><Printer /></el-icon> {{ data.MentionSourceName }}
+        </div>
     </el-card>
 
 
@@ -30,15 +33,22 @@
         </template>
 
         <div style="display: flex; flex-direction: column;">
-            <div class="new-item">
-                <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.Author }}
+            <div style="display: flex; gap: 1rem;">
+                <div class="new-item">
+                    <el-icon class="new-item-icon"><Printer /></el-icon> {{ data.MentionSourceName }}
+                </div>
+                <div class="new-item">
+                    <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.Author }}
+                </div>
             </div>
-            <div class="new-item" style="color: #aaaaaa">
-                <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
-            </div>
-            <div class="new-item" style="color: #67C23A">
-                <el-icon class="new-item-icon"><Link /></el-icon>
-                <el-link type="success" :href="data.MentionIdentifier" target="_blank">{{ data.MentionIdentifier }}</el-link>
+            <div style="display: flex; gap: 1rem;">
+                <div class="new-item" style="color: #aaaaaa">
+                    <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
+                </div>
+                <div class="new-item" style="color: #67C23A">
+                    <el-icon class="new-item-icon"><Link /></el-icon>
+                    <el-link type="success" :href="data.MentionIdentifier" target="_blank">{{ data.MentionIdentifier }}</el-link>
+                </div>
             </div>
         </div>
 
@@ -52,7 +62,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Avatar, Clock, Document, Link } from '@element-plus/icons-vue'
+import { Avatar, Clock, Document, Link, Printer } from '@element-plus/icons-vue'
 // const props = defineProps(['data'])
 // const data = ref(props.data)
 
