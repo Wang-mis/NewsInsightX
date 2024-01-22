@@ -10,14 +10,20 @@ import * as echarts from "echarts"
 import { ref, onMounted } from "vue"
 import 'echarts-wordcloud'
 
+const props = defineProps({
+  vdata: {
+    type: Object,
+    required: true
+  }
+})
 
 const chart = ref()
 
 onMounted(()=>{
-  drawChart()
+  drawChart(props.vdata)
 })
 
-const drawChart = () => {
+const drawChart = (data) => {
   const myChart = echarts.init(chart.value)
     console.log(myChart)
     // 图标自适应
@@ -28,21 +34,6 @@ const drawChart = () => {
         },
         false
     )
-    const data =[
-      {value: 67, name: '红腹角雉'},
-      {value: 98, name: '麝牛'},
-      {value: 97, name: '山舌鱼'},
-      {value: 100, name: '羚羊'},
-      {value: 37, name: '非洲王子'},
-      {value: 83, name: '麋鹿'},
-      {value: 60, name: '中华鲟'},
-      {value: 42, name: '鮪鱼'},
-      {value: 96, name: '射水鱼'},
-      {value: 54, name: '果子狸'},
-      {value: 33, name: '小春鱼'},
-      {value: 84, name: '水獭'},
-      {value: 86, name: '刺猬'}
-    ]
 
     const options = {
       tooltip: {
@@ -60,7 +51,7 @@ const drawChart = () => {
           type: 'wordCloud',
 
           // 要绘制云的形状,默认是 circle，可选的参数有 cardioid 、 diamond 、 triangle-forward 、 triangle 、 star
-          shape: 'circle',
+          shape: 'triangle',
 
           // 保持maskImage的纵横比或1:1的形状
           // 从echarts-wordcloud@2.1.0开始支持该选项
@@ -70,7 +61,7 @@ const drawChart = () => {
           // 默认放置在中心，大小为75% x 80%。
           left: 'center',
           top: 'center',
-          width: '70%',
+          width: '90%',
           height: '80%',
           right: null,
           bottom: null,

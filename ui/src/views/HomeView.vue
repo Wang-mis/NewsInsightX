@@ -81,14 +81,14 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>关键词词云</h3>
+          <h3>热点词云</h3>
           <el-tag type="info" size="large" effect="dark">
-            <h2>KeywordCloud</h2>
+            <h2>KeywordCloud </h2>
           </el-tag>
         </div>
       </template>
       <div class="chart">
-        <VWordCloud />
+        <VWordCloud :vdata="homeStatistics['KeywordCloud']"/>
       </div>
     </el-card>
 
