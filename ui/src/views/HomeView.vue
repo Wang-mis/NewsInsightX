@@ -81,14 +81,14 @@
     <el-card body-style="padding: 0;">
       <template #header>
         <div class="card-header">
-          <h3>关键词词云</h3>
+          <h3>热点词云</h3>
           <el-tag type="info" size="large" effect="dark">
-            <h2>KeywordCloud</h2>
+            <h2>KeywordCloud </h2>
           </el-tag>
         </div>
       </template>
       <div class="chart">
-        <VWordCloud />
+        <VWordCloud :vdata="homeStatistics['KeywordCloud']"/>
       </div>
     </el-card>
 
@@ -101,13 +101,13 @@ import VPieCharts from '../components/VPieCharts.vue'
 import VWordCloud from '@/components/VWordCloud.vue'
 import { queryHomeStatistics } from '@/api/requestAPI'
 import { deepCopy } from '@/utils/funcsUtil'
-import { reactive, ref, onMounted, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 const store = useStore()
 
 const homeStatistics = computed({
   get: () => store.state.homeStatistics,
-  set: (value) => {
+  set: () => {
     throw new Error("homeStatistics is a read-only computed property.");
   },
 });
