@@ -13,6 +13,7 @@
     "@typescript-eslint/parser": "^6.19.0",
     "axios": "^1.6.2",
     "echarts": "^5.4.3",
+    "echarts-wordcloud": "^2.1.0",
     "element-plus": "^2.4.3",
     "sass": "^1.70.0",
     "vue": "^3.3.4",

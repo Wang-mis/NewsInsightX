@@ -78,12 +78,27 @@
       </div>
     </el-card>
 
+    <el-card body-style="padding: 0;">
+      <template #header>
+        <div class="card-header">
+          <h3>关键词词云</h3>
+          <el-tag type="info" size="large" effect="dark">
+            <h2>KeywordCloud</h2>
+          </el-tag>
+        </div>
+      </template>
+      <div class="chart">
+        <VWordCloud />
+      </div>
+    </el-card>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import VPieCharts from '../components/VPieCharts.vue'
 // import VBarCharts from '@/components/VBarCharts.vue'
+import VWordCloud from '@/components/VWordCloud.vue'
 import { queryHomeStatistics } from '@/api/requestAPI'
 import { deepCopy } from '@/utils/funcsUtil'
 import { reactive, ref, onMounted, computed } from 'vue'
