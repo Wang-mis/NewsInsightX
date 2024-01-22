@@ -47,13 +47,13 @@ const drawChart = () => {
     const options = {
       tooltip: {
         trigger: 'item',
-        formatter: params => {
-          const { name, value } = params
-          return `
-          平台：${name} <br/>
-          数量：${value}
-          `
-        }
+        // formatter: params => {
+        //   const { name, value } = params
+        //   return `
+        //   平台：${name} <br/>
+        //   数量：${value}
+        //   `
+        // }
       },
       series: [
         {
