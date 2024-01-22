@@ -8,7 +8,7 @@ from utils.helper import getEventRootCodeExplain, sortCustomDict
 from collections import Counter
 
 
-engine = create_engine('sqlite:///C:\\PROJECTS\\grad\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
+engine = create_engine('sqlite:///E:\\Projects\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
 
 Base = declarative_base()
 
@@ -310,6 +310,7 @@ def queryStatistics():
 
     # KeywordCloud
     # 查询keyword
+    # 关键词处理不干净
     sql_keyword = "SELECT * FROM keyword_table"
     df_keyword = pd.read_sql_query(sql_keyword, engine)
     Keywords = df_keyword["Keyword"].to_list()
