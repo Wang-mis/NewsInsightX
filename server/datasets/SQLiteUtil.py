@@ -8,7 +8,7 @@ from utils.helper import getEventRootCodeExplain, sortCustomDict
 from collections import Counter
 
 
-engine = create_engine('sqlite:///E:\\Projects\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
+engine = create_engine('sqlite:///C:\\PROJECTS\\grad\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
 
 Base = declarative_base()
 
@@ -139,6 +139,19 @@ class NewItem(Base):
             'Content': self.Content
         }
 
+
+# 关键词表
+class KeywordItem(Base):
+    __tablename__ = 'keyword_table'
+
+    # 系统自带id 可自增
+    AutoId = Column(Integer, primary_key=True)
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String)
+    Keyword = Column(Text)
+
+
+
 def queryNewsByKeyword(args):
     print(args)
 
@@ -212,15 +225,17 @@ def queryStatistics():
             { "value": 735, "name": 'NEG' },
             { "value": 580, "name": 'NEU' }
         ],
+        "KeywordCloud": [],
     }
 
+    # 查询merge
     sql_merge = "SELECT * FROM merge_table"
     df_merge = pd.read_sql_query(sql_merge, engine)
     
     result_merge = df_merge.groupby("MentionSourceName").size().to_dict()
     print(result_merge)
 
-
+    # 查询news
     sql_new = "SELECT * FROM new_table"
     df_new = pd.read_sql_query(sql_new, engine)
     
@@ -292,6 +307,27 @@ def queryStatistics():
             "name": key
         })
 
+
+    # KeywordCloud
+    # 查询keyword
+    sql_keyword = "SELECT * FROM keyword_table"
+    df_keyword = pd.read_sql_query(sql_keyword, engine)
+    Keywords = df_keyword["Keyword"].to_list()
+
+    keywords = []
+    for ele in Keywords:
+        keywords += ele.split("|")
+    
+    sorted_dict = sortCustomDict(dict(Counter(keywords)))
+
+    data["KeywordCloud"] = []
+    for key, value in sorted_dict.items():
+        data["KeywordCloud"].append({
+            "value": value,
+            "name": key
+        })
+        if len(data["KeywordCloud"]) > 60:
+            break
 
 
 
