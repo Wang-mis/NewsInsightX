@@ -78,6 +78,7 @@ def queryHomeStatisticsAPI():
 
 
 
+
 if __name__ == '__main__':
     print('run 0.0.0.0:14449')
     app.run(host='0.0.0.0', port=14449)
