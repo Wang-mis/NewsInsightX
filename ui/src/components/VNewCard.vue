@@ -9,7 +9,7 @@
             <el-icon class="new-item-icon"><Avatar /></el-icon> {{ data.Author }}
         </div>
         <div class="new-item" style="color: #aaaaaa">
-            <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
+            <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ publishTimeFormat(data.DTime) }}</span>
         </div>
         <div class="new-item" style="color: #aaaaaa">
             <el-icon class="new-item-icon"><Printer /></el-icon><span class="post-meta"> {{ data.MentionSourceName }} </span>
@@ -43,7 +43,7 @@
             </div>
             <div style="display: flex; gap: 1rem;">
                 <div class="new-item" style="color: #aaaaaa">
-                    <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ data.PTime }}</span>
+                    <el-icon class="new-item-icon"><Clock /></el-icon><span class="post-meta">{{ publishTimeFormat(data.DTime) }}</span>
                 </div>
                 <div class="new-item" style="color: #67C23A">
                     <el-icon class="new-item-icon"><Link /></el-icon>
@@ -63,6 +63,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Avatar, Clock, Document, Link, Printer } from '@element-plus/icons-vue'
+import { publishTimeFormat } from '@/utils/funcsUtil'
 // const props = defineProps(['data'])
 // const data = ref(props.data)
 
