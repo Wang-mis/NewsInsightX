@@ -59,6 +59,7 @@ def user_test():
 def queryNewsAPI():
     args = request.get_json()
     try:
+        print(args)
         data = queryNewsByKeyword(args=args)
         return ReturnSuccessInfo(data=data)
     except Exception as e:

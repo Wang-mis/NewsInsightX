@@ -95,5 +95,5 @@ def getEventRootCodeExplain(id):
 
 
 # 按字典值value递减排序
-def sortCustomDict(data: dict, reverse=True) -> dict:
+def sort_dict_by_value(data: dict, reverse=True) -> dict:
     return dict(sorted(data.items(), key=lambda x: x[1], reverse=reverse))
