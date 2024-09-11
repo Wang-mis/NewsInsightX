@@ -123,6 +123,7 @@ const getHomeStatistics = async () => {
 
 async function gainHomeStatistics() {
   await queryHomeStatistics().then(res => {
+    console.log(res)
     if (res.code === 0) {
       console.log(res.data) // MentionSourceName
       store.commit("updateHomeStatistics", deepCopy(res.data))

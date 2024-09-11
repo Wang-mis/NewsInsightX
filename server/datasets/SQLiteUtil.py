@@ -1,22 +1,29 @@
+from collections import Counter
+
+import pandas as pd
+from sqlalchemy import Column, Integer, String, Float, Text
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, DECIMAL, Float, Text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import or_
-import pandas as pd
-from utils.helper import getEventRootCodeExplain, sortCustomDict
-from collections import Counter
 
+# from utils.helper import getEventRootCodeExplain, sortCustomDict
+from server.utils.helper import getEventRootCodeExplain, sortCustomDict
 
-engine = create_engine('sqlite:///C:\\PROJECTS\\grad\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False', echo=True)
+engine = create_engine(
+    'sqlite:///C:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
+    echo=True
+)
 
 Base = declarative_base()
 
+
+# ORM模型，一个类对应数据库中的一张表，该类的一个实例对象对应表中的一条记录
 class MergeItem(Base):
-    __tablename__ = 'merge_table'
+    __tablename__ = 'merge_table'  # 表名
 
     # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)
+    AutoId = Column(Integer, primary_key=True)  # 一个属性对应表中的一个字段，Interger表示该属性的类型
 
     GlobalEventID = Column(Integer)
     Day = Column(Integer)
@@ -151,7 +158,6 @@ class KeywordItem(Base):
     Keyword = Column(Text)
 
 
-
 def queryNewsByKeyword(args):
     print(args)
 
@@ -165,12 +171,19 @@ def queryNewsByKeyword(args):
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    query = session.query(NewItem).filter(NewItem.Content.ilike(keyword)).filter(or_(NewItem.DTime == timerange, timerange == ''))
+    print(timerange)
 
-    totalRecords = len(query.all())
+    # 从数据库中查找相应记录
+    query = (session.query(NewItem)
+             .filter(NewItem.Content.ilike(keyword))  # 模糊搜索，不区分大小写
+             .filter(or_(NewItem.DTime == timerange, timerange == '')))  # 匹配日期
 
+    totalRecords = len(query.all())  # 获取记录条数
+
+    # 按日期降序排序，获取当前页面的所有记录，results为NewItem对象的数组
     results = query.order_by(NewItem.DTime.desc()).offset(offset_data).limit(limit).all()
 
+    # 将NewItem对象数组转化为字典的数组，便于以json的格式传给前端
     newsList = []
     for newItem in results:
         newsList.append({
@@ -184,65 +197,65 @@ def queryNewsByKeyword(args):
             'MentionIdentifier': newItem.MentionIdentifier,
             'Content': newItem.Content
         })
-    
-    # for newItem in newsList:
-    #     print(newItem)
-    
+
     session.commit()
     session.close()
 
+    # 将总记录数和当前页面的所有记录数据传给前端
     return {
         "totalRecords": totalRecords,
         "newsList": newsList
     }
 
+
 # 返回首页统计信息
 def queryStatistics():
     data = {
         "MentionSourceName": [
-            { "value": 1048, "name": 'bbc.com' },
-            { "value": 735, "name": 'bbc.co.uk' },
-            { "value": 580, "name": 'yahoo.com' },
-            { "value": 484, "name": 'cnn.com' },
-            { "value": 300, "name": 'nytime.com' }
+            {"value": 1048, "name": 'bbc.com'},
+            {"value": 735, "name": 'bbc.co.uk'},
+            {"value": 580, "name": 'yahoo.com'},
+            {"value": 484, "name": 'cnn.com'},
+            {"value": 300, "name": 'nytime.com'}
         ],
         "ActorCountryCode": [
-            { "value": 1048, "name": 'UKR' },
-            { "value": 735, "name": 'USA' },
-            { "value": 580, "name": 'GBR' },
-            { "value": 484, "name": 'EUR' },
-            { "value": 300, "name": 'RUS' }
+            {"value": 1048, "name": 'UKR'},
+            {"value": 735, "name": 'USA'},
+            {"value": 580, "name": 'GBR'},
+            {"value": 484, "name": 'EUR'},
+            {"value": 300, "name": 'RUS'}
         ],
         "EventRootCode": [
-            { "value": 1048, "name": getEventRootCodeExplain(1)["concise"] },
-            { "value": 735, "name": getEventRootCodeExplain(2)["concise"] },
-            { "value": 580, "name": getEventRootCodeExplain(3)["concise"] },
-            { "value": 484, "name": getEventRootCodeExplain(4)["concise"] },
-            { "value": 300, "name": getEventRootCodeExplain(5)["concise"] }
+            {"value": 1048, "name": getEventRootCodeExplain(1)["concise"]},
+            {"value": 735, "name": getEventRootCodeExplain(2)["concise"]},
+            {"value": 580, "name": getEventRootCodeExplain(3)["concise"]},
+            {"value": 484, "name": getEventRootCodeExplain(4)["concise"]},
+            {"value": 300, "name": getEventRootCodeExplain(5)["concise"]}
         ],
         "MentionDocTone": [
-            { "value": 1048, "name": 'POS' },
-            { "value": 735, "name": 'NEG' },
-            { "value": 580, "name": 'NEU' }
+            {"value": 1048, "name": 'POS'},
+            {"value": 735, "name": 'NEG'},
+            {"value": 580, "name": 'NEU'}
         ],
         "KeywordCloud": [],
     }
 
+    # merge和new两个表的区别：new表的数据是从网络上爬取来的，merge的数据从数据集中读取，new表中包含文章内容。
     # 查询merge
     sql_merge = "SELECT * FROM merge_table"
     df_merge = pd.read_sql_query(sql_merge, engine)
-    
-    result_merge = df_merge.groupby("MentionSourceName").size().to_dict()
+
+    result_merge = df_merge.groupby("MentionSourceName").size().to_dict()  # 统计merge中各个媒体发布的新闻数量
     print(result_merge)
 
     # 查询news
     sql_new = "SELECT * FROM new_table"
     df_new = pd.read_sql_query(sql_new, engine)
-    
-    result_new = df_new.groupby("MentionSourceName").size().to_dict()
+
+    result_new = df_new.groupby("MentionSourceName").size().to_dict()  # 统计new中各个媒体发布的新闻数量
     print(result_new)
 
-    df_inner = pd.merge(df_merge, df_new, how='inner', on='UniqueID')
+    df_inner = pd.merge(df_merge, df_new, how='inner', on='UniqueID')  # 使用内连接合并两个表，相当于扩充new表中的属性
 
     # NewsProportion
     data["NewsProportion"] = []
@@ -255,7 +268,7 @@ def queryStatistics():
         "name": "Without Content"
     })
 
-    # MentionSourceName
+    # MentionSourceName 每个新闻媒体发表的文章数量
     data["MentionSourceName"] = []
     sorted_dict = sortCustomDict(result_new)
     for key, value in sorted_dict.items():
@@ -263,22 +276,23 @@ def queryStatistics():
             "value": value,
             "name": key
         })
-        if len(data["MentionSourceName"]) > 7:
+        if len(data["MentionSourceName"]) > 7:  # 只统计前8个新闻媒体
             break
-    
-    # ActorCountryCode
+
+    # ActorCountryCode 事件发生的国家，若CountryCode == ''，说明该事件与国家无关
     actorcountrycode = df_inner["Actor1CountryCode"].to_list() + df_inner["Actor2CountryCode"].to_list()
     sorted_dict = sortCustomDict(dict(Counter(actorcountrycode)))
     data["ActorCountryCode"] = []
+    print("sorted_dict = " + str(sorted_dict))
     for key, value in sorted_dict.items():
         data["ActorCountryCode"].append({
             "value": value,
             "name": key
         })
-        if len(data["ActorCountryCode"]) > 15:
+        if len(data["ActorCountryCode"]) > 15:  # 只记录前16个国家（包括与国家无关）
             break
-    
-    # EventRootCode
+
+    # EventRootCode 每种事件类型的数量
     eventrootcode = df_inner["EventRootCode"].to_list()
     sorted_dict = sortCustomDict(dict(Counter(eventrootcode)))
     data["EventRootCode"] = []
@@ -290,7 +304,7 @@ def queryStatistics():
         if len(data["EventRootCode"]) > 7:
             break
 
-    # MentionDocTone
+    # MentionDocTone 积极和消极事件的数量
     positive_count = len(df_inner[df_inner['MentionDocTone'] > 0])
     negative_count = len(df_inner[df_inner['MentionDocTone'] < 0])
     neutral_count = len(df_inner) - positive_count - negative_count
@@ -307,7 +321,6 @@ def queryStatistics():
             "name": key
         })
 
-
     # KeywordCloud
     # 查询keyword
     sql_keyword = "SELECT * FROM keyword_table"
@@ -316,8 +329,8 @@ def queryStatistics():
 
     keywords = []
     for ele in Keywords:
-        keywords += ele.split("|")
-    
+        keywords += ele.split("|")  # 每个事件可能有多个关键词，关键词之间用|分隔
+
     sorted_dict = sortCustomDict(dict(Counter(keywords)))
 
     data["KeywordCloud"] = []
@@ -329,22 +342,19 @@ def queryStatistics():
         if len(data["KeywordCloud"]) > 60:
             break
 
-
-
     return data
 
 
 def test():
     # 写一条sql
     sql = "SELECT COUNT(*) FROM new_table"
-    #建立dataframe
-    df = pd.read_sql_query(sql,engine)
+    # 建立dataframe
+    df = pd.read_sql_query(sql, engine)
     print(df)
 
 
 if __name__ == '__main__':
     # test()
-
     # args = {'keyword': '', 'date': '', 'page': 1, 'limit': 20, 'total': 0}
     # queryNewsByKeyword(args=args)
     pass

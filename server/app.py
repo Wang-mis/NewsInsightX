@@ -20,8 +20,8 @@ def user_login():
     username = data.get("username")
     password = data.get("password")
     if username == "admin" and password == "123456":
-        return ReturnSuccessInfo(data={ "token": "666666" })
-    
+        return ReturnSuccessInfo(data={"token": "666666"})
+
     return ReturnWarningInfo()
 
 
@@ -34,8 +34,8 @@ def user_info():
     """
     token = request.headers.get("token")
     if token == "hdjhs__token":
-        return ReturnSuccessInfo(data={ "id": "1", "userName": "admin", "realName": "张三", "userType": 1 })
-    
+        return ReturnSuccessInfo(data={"id": "1", "userName": "admin", "realName": "张三", "userType": 1})
+
     return ReturnWarningInfo()
 
 
@@ -49,8 +49,8 @@ def user_test():
     print(data)
     test_arg = data.get("test_arg")
     if test_arg == "test_arg":
-        return ReturnSuccessInfo(data={ "id": "1", "arr": [1,2,3] })
-    
+        return ReturnSuccessInfo(data={"id": "1", "arr": [1, 2, 3]})
+
     return ReturnWarningInfo()
 
 
@@ -75,8 +75,6 @@ def queryHomeStatisticsAPI():
     except Exception as e:
         print(e)
     return ReturnWarningInfo()
-
-
 
 
 if __name__ == '__main__':
