@@ -9,7 +9,7 @@ from server.utils.helper import getEventRootCodeExplain, sort_dict_by_value
 import pandas as pd
 
 engine = create_engine(
-    'sqlite:///C:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
+    'sqlite:///D:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
     echo=True
 )
 
@@ -21,7 +21,7 @@ class MergeItem(Base):
     __tablename__ = 'merge_table'  # 表名
 
     # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)  # 一个属性对应表中的一个字段，Interger表示该属性的类型
+    # AutoId = Column(Integer, primary_key=True)  # 一个属性对应表中的一个字段，Interger表示该属性的类型
 
     GlobalEventID = Column(Integer)
     Day = Column(Integer)
@@ -112,7 +112,7 @@ class MergeItem(Base):
     Extras = Column(String)
 
     # 为了唯一标记一篇新闻文章
-    UniqueID = Column(String)
+    UniqueID = Column(String, primary_key=True)
 
 
 # 新闻表
@@ -120,10 +120,10 @@ class NewItem(Base):
     __tablename__ = 'new_table'
 
     # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)
+    # AutoId = Column(Integer, primary_key=True)
 
     # 为了唯一标记一篇新闻文章
-    UniqueID = Column(String)
+    UniqueID = Column(String, primary_key=True)
     Title = Column(String)
     Author = Column(String)
     PTime = Column(String)
@@ -150,9 +150,9 @@ class KeywordItem(Base):
     __tablename__ = 'keyword_table'
 
     # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)
+    # AutoId = Column(Integer, primary_key=True)
     # 为了唯一标记一篇新闻文章
-    UniqueID = Column(String)
+    UniqueID = Column(String, primary_key=True)
     Keyword = Column(Text)
 
 
@@ -193,7 +193,7 @@ def queryNewsByKeyword(args):
     newsList = []
     for newItem in results:
         newsList.append({
-            'AutoId': newItem.AutoId,
+            # 'AutoId': newItem.AutoId,
             'UniqueID': newItem.UniqueID,
             'Title': newItem.Title,
             'Author': newItem.Author,
@@ -224,6 +224,8 @@ def queryStatistics():
     df_merge, df_new = pd.read_sql_query(sql_merge, engine), pd.read_sql_query(sql_new, engine)
     # 使用内连接合并两个表，相当于扩充new表中的属性
     df_inner = pd.merge(df_merge, df_new, how='inner', on='UniqueID')
+
+    print("---------------------", len(df_merge), len(df_new), len(df_inner))
 
     # NewsProportion
     data["NewsProportion"] = []
