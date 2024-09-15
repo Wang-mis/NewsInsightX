@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
-from utils.helper import ReturnWarningInfo, ReturnSuccessInfo
-from datasets.SQLiteUtil import queryNewsByKeyword, queryStatistics
+from utils.helper import return_warning_info, return_success_info
+from datasets.SQLiteUtil import query_news_by_keyword, query_statistics
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -12,70 +12,48 @@ app.config['CORS_HEADER'] = 'Content-Type'
 @app.route("/user/login", methods=["POST"])
 @cross_origin()
 def user_login():
-    """
-    用户登录
-    :return:
-    """
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
     if username == "admin" and password == "123456":
-        return ReturnSuccessInfo(data={"token": "666666"})
+        return return_success_info(data={"token": "666666"})
 
-    return ReturnWarningInfo()
+    return return_warning_info()
 
 
 @app.route("/user/info", methods=["GET", "POST"])
 @cross_origin()
 def user_info():
-    """
-    获取当前用户信息
-    :return:
-    """
     token = request.headers.get("token")
     if token == "hdjhs__token":
-        return ReturnSuccessInfo(data={"id": "1", "userName": "admin", "realName": "张三", "userType": 1})
+        return return_success_info(data={"id": "1", "userName": "admin", "realName": "张三", "userType": 1})
 
-    return ReturnWarningInfo()
-
-
-@app.route("/user/test", methods=["POST"])
-@cross_origin()
-def user_test():
-    """
-    测试POST方法
-    """
-    data = request.get_json()
-    print(data)
-    test_arg = data.get("test_arg")
-    if test_arg == "test_arg":
-        return ReturnSuccessInfo(data={"id": "1", "arr": [1, 2, 3]})
-
-    return ReturnWarningInfo()
+    return return_warning_info()
 
 
 @app.route("/querynews", methods=["POST"])
 @cross_origin()
-def queryNewsAPI():
+def query_news_api():
     args = request.get_json()
     try:
         print(args)
-        data = queryNewsByKeyword(args=args)
-        return ReturnSuccessInfo(data=data)
+        data = query_news_by_keyword(args=args)
+        return return_success_info(data=data)
     except Exception as e:
         print(e)
-    return ReturnWarningInfo()
+    return return_warning_info()
 
 
 @app.route("/homepage", methods=["GET"])
 @cross_origin()
-def queryHomeStatisticsAPI():
+def query_home_statistics_api():
     try:
-        data = queryStatistics()
-        return ReturnSuccessInfo(data=data)
+        force_update = bool(int(request.args.get('update', default='0')))
+        data = query_statistics(force_update)
+        return return_success_info(data=data)
     except Exception as e:
-        print(e)
-    return ReturnWarningInfo()
+        print("请求统计数据失败。\n", e)
+        return return_warning_info()
 
 
 if __name__ == '__main__':
