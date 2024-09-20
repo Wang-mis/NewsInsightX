@@ -5,15 +5,7 @@
         <el-form-item label="关键词：">
           <el-input v-model="formInline.keyword" placeholder="人物名称、热点词、热点事件" clearable/>
         </el-form-item>
-        <el-form-item label="时间点：">
-          <!--          <el-date-picker-->
-          <!--              v-model="formInline.date"-->
-          <!--              type="date"-->
-          <!--              value-format="YYYYMMDD"-->
-          <!--              format="YYYYMMDD"-->
-          <!--              placeholder="选择日期"-->
-          <!--              clearable-->
-          <!--          />-->
+        <el-form-item label="时间段：">
           <el-date-picker
               v-model="formInline.date"
               type="daterange"
