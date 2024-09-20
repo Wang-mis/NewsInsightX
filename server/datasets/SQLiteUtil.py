@@ -10,7 +10,6 @@ from sqlalchemy.orm import sessionmaker
 # from server.utils.helper import get_event_root_code_explain, sort_dict_by_value
 from utils.helper import get_event_root_code_explain, sort_dict_by_value
 
-
 engine = create_engine(
     # 'sqlite:///D:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
     # 'sqlite:///C:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
@@ -149,6 +148,15 @@ class KeywordItem(Base):
 
     UniqueID = Column(String, primary_key=True)
     Keyword = Column(Text)
+
+
+# 用户信息表
+class UserItem(Base):
+    __tablename__ = 'userinfo'
+
+    username = Column(String, primary_key=True)
+    password = Column(String)
+    intro = Column(Text)
 
 
 # noinspection PyUnresolvedReferences
@@ -341,3 +349,51 @@ def query_statistics(force_update=False):
 
     statistics_data['updated'] = True
     return statistics_data
+
+
+def add_user(username, password, intro=""):
+    session = sessionmaker(bind=engine)()
+    try:
+        Base.metadata.create_all(engine)
+        exist_user = session.query(UserItem).filter_by(username=username).first()
+        if exist_user:
+            return 1
+        new_user = UserItem(username=username, password=password, intro=intro)
+        session.add(new_user)
+        session.commit()
+        return 0
+    except Exception as e:
+        print(e)
+        session.rollback()
+        return 100
+
+
+def delete_user(username, password):
+    session = sessionmaker(bind=engine)()
+    try:
+        Base.metadata.create_all(engine)
+        exist_user = session.query(UserItem).filter_by(username=username).first()
+        if not exist_user:
+            return 2
+        if exist_user.password != password:
+            return 1
+        session.delete(exist_user)
+        session.commit()
+        return 0
+    except Exception as e:
+        session.rollback()
+        return 100
+
+
+def query_user(username, password):
+    session = sessionmaker(bind=engine)()
+    try:
+        Base.metadata.create_all(engine)
+        exist_user = session.query(UserItem).filter_by(username=username).first()
+        if not exist_user:
+            return 2, None
+        if exist_user.password != password:
+            return 1, None
+        return 0, exist_user
+    except Exception as e:
+        return 100, None

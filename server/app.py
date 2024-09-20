@@ -1,5 +1,8 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
+
+from datasets.SQLiteUtil import query_user, add_user, delete_user
+from utils.helper import return_info
 from utils.helper import return_warning_info, return_success_info
 from datasets.SQLiteUtil import query_news_by_keyword, query_statistics
 
@@ -15,20 +18,62 @@ def user_login():
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
-    if username == "admin" and password == "123456":
-        return return_success_info(data={"token": "666666"})
 
-    return return_warning_info()
+    code, user = query_user(username, password)
+    if code == 0:
+        msg = "成功"
+        return return_info(code, "success", msg, {
+            'username': user.username,
+            'password': user.password,
+            'intro': user.intro,
+        })
+    elif code == 1:
+        msg = "密码错误"
+    elif code == 2:
+        msg = "用户不存在"
+    else:
+        msg = "未知错误"
+
+    return return_info(code, "error", msg, {})
 
 
-@app.route("/user/info", methods=["GET", "POST"])
+@app.route("/user/signup", methods=["POST"])
 @cross_origin()
-def user_info():
-    token = request.headers.get("token")
-    if token == "hdjhs__token":
-        return return_success_info(data={"id": "1", "userName": "admin", "realName": "张三", "userType": 1})
+def user_signup():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
 
-    return return_warning_info()
+    code = add_user(username, password)
+
+    if code == 0:
+        msg = "成功"
+    elif code == 1:
+        msg = "用户已存在"
+    else:
+        msg = "未知错误"
+
+    return return_info(code, "success" if code == 0 else "error", msg, {})
+
+
+@app.route("/user/delete", methods=["POST"])
+@cross_origin()
+def user_delete():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+
+    code = delete_user(username, password)
+    if code == 0:
+        msg = "成功"
+    elif code == 1:
+        msg = "密码错误"
+    elif code == 2:
+        msg = "用户不存在"
+    else:
+        msg = "未知错误"
+
+    return return_info(code, "success" if code == 0 else "error", msg, {})
 
 
 @app.route("/querynews", methods=["POST"])

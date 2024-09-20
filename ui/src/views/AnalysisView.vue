@@ -20,7 +20,6 @@ onMounted(() => {
 </template> -->
 
 
-
 <template>
   <div class="home">
     <el-button type="primary">我是按钮</el-button>
@@ -32,7 +31,7 @@ onMounted(() => {
 </template>
 
 <script>
-import { getUserInfo, getUserTest } from '../api/requestAPI'
+import {getUserInfo, getUserTest} from '@/utils/axiosUtil'
 
 export default {
   name: "TestView",
@@ -48,7 +47,7 @@ export default {
         this.user = res.data;
       }
     })
-    
+
     getUserTest({test_arg: "test_arg"}).then(res => {
       if (res.code === 0) {
         this.test = res.data;

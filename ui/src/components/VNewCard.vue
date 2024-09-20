@@ -99,7 +99,7 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {Avatar, Clock, Document, Link, Printer} from '@element-plus/icons-vue'
-import {publishTimeFormat} from '@/utils/funcsUtil'
+import {publishTimeFormat} from '@/utils/funcsUtil.js'
 
 defineProps({
   data: {
