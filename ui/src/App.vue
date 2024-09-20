@@ -1,56 +1,58 @@
 <template>
-  
-  <header class="home-header">
+
+  <header class="home-header" style="top: 1rem;">
     <el-menu
-      class="el-menu-demo"
-      background-color="#545c64"
-      text-color="#fff"
-      mode="horizontal"
-      :ellipsis="false"
-      :router="true"
-      @select="handleSelect"
+        class="el-menu-demo"
+        background-color="#545c64"
+        text-color="#fff"
+        mode="horizontal"
+        :ellipsis="false"
+        :router="true"
     >
       <el-menu-item index="/">
-        <!-- <img
-          style="width: 100px; margin-right: 3px;"
-          src="@/assets/element-plus-logo.svg"
-          alt="Element logo"
-        /> -->
-        <!-- <el-icon style="font-size: 2em;"><DataLine /></el-icon> -->
-        <h2>NewsInsightX: The Latest Global News Portal System Featuring Hot News</h2>
+        <h2 class>NewsInsightX: The Latest Global News Portal System Featuring Hot News</h2>
       </el-menu-item>
-      <div class="flex-grow"></div>
-      
+
+      <div style="flex-grow: 1"></div>
+
       <el-menu-item index="/search">
-        <el-icon style="font-size: 2em;"><Search /></el-icon><h2>Search</h2>
+        <el-icon style="font-size: 2em;">
+          <Search/>
+        </el-icon>
+        <h2>Search</h2>
       </el-menu-item>
+
       <el-menu-item index="/analysis">
-        <el-icon style="font-size: 2em;"><DataAnalysis /></el-icon><h2>Analysis</h2>
+        <el-icon style="font-size: 2em;">
+          <DataAnalysis/>
+        </el-icon>
+        <h2>Analysis</h2>
       </el-menu-item>
+
       <el-menu-item @click="handelSync">
-        <el-icon style="font-size: 2em;"><Refresh /></el-icon><h2>Synchronize</h2>
+        <el-icon style="font-size: 2em;">
+          <Refresh/>
+        </el-icon>
+        <h2>Synchronize</h2>
       </el-menu-item>
-      <!-- 中英文翻译 -->
-      <!-- <el-menu-item @click="exportDataSet"><el-icon style="font-size: 2em;"><Download /></el-icon></el-menu-item> -->
     </el-menu>
+
   </header>
 
   <div id="home-container">
-    <RouterView />
+    <RouterView/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Refresh, Search, DataAnalysis, DataLine } from '@element-plus/icons-vue'
-import { RouterView } from 'vue-router'
-import { ElNotification } from 'element-plus'
+import {Refresh, Search, DataAnalysis} from '@element-plus/icons-vue'
+import {RouterView} from 'vue-router'
+import {ElNotification} from 'element-plus'
 
-
-const handleSelect = (key, keyPath) => {
-  console.log(key, keyPath)
-}
 
 const handelSync = () => {
+  // TODO: 更新数据
+
   ElNotification({
     title: "更新数据",
     type: "success",
@@ -60,13 +62,5 @@ const handelSync = () => {
 </script>
 
 <style scoped>
-
-.home-header{
-  top: 1rem;
-  /* position: sticky; */
-  .flex-grow {
-    flex-grow: 1;
-  }
-}
 
 </style>

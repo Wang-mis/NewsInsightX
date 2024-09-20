@@ -55,8 +55,9 @@
 
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
-import {queryNews} from '@/api/requestAPI'
-import {deepCopy} from '@/utils/funcsUtil'
+import {queryNews} from '@/utils/axiosUtil.js'
+import {deepCopy} from '@/utils/funcsUtil.js'
+
 import {reactive, ref, onMounted, computed} from 'vue'
 import {useStore} from 'vuex'
 

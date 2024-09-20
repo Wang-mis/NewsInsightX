@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import {createStore} from 'vuex'
 
 // a new store instance
 const store = createStore({
@@ -12,7 +12,7 @@ const store = createStore({
 
         }
     },
-    mutations:{
+    mutations: {
         updateNewsList(state, message) {
             state.newsList = message
             // console.log(state.newsList)
@@ -22,5 +22,5 @@ const store = createStore({
         },
     }
 })
- 
+
 export default store

@@ -7,11 +7,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from server.utils.helper import get_event_root_code_explain, sort_dict_by_value
+# from server.utils.helper import get_event_root_code_explain, sort_dict_by_value
+from utils.helper import get_event_root_code_explain, sort_dict_by_value
+
 
 engine = create_engine(
     # 'sqlite:///D:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
-    'sqlite:///C:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
+    # 'sqlite:///C:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
+    # 'sqlite:////home/wsx/remote/pleasenews/helper/SQLiteTest.db?check_same_thread=False',
+    'sqlite:////home/wsx/pleasenews/helper/SQLiteTest.db?check_same_thread=False',
     echo=False
 )
 

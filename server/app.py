@@ -57,5 +57,5 @@ def query_home_statistics_api():
 
 
 if __name__ == '__main__':
-    print('run 0.0.0.0:14449')
-    app.run(host='0.0.0.0', port=14449)
+    print('run 0.0.0.0:14451')
+    app.run(host='0.0.0.0', port=14451, debug=True)
