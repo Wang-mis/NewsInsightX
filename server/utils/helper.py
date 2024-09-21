@@ -10,14 +10,6 @@ def return_info(code, info_type, msg, data):
     })
 
 
-def return_success_info(msg="success", data=None):
-    return return_info(0, "success", msg, data)
-
-
-def return_warning_info(msg="warning", data=None):
-    return return_info(20010, "warning", msg, data)
-
-
 # EventRootCode详细解释
 EventRootCode_ExplainDetail = {
     '1': 'MAKE PUBLIC STATEMENT',

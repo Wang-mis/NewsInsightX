@@ -7,13 +7,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# from server.utils.helper import get_event_root_code_explain, sort_dict_by_value
 from utils.helper import get_event_root_code_explain, sort_dict_by_value
 
-engine = create_engine(
-    # 'sqlite:///D:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
-    # 'sqlite:///C:\\Programs\\github\\pleasenews\\helper\\SQLiteTest.db?check_same_thread=False',
-    # 'sqlite:////home/wsx/remote/pleasenews/helper/SQLiteTest.db?check_same_thread=False',
+data_engine = create_engine(
     'sqlite:////home/wsx/pleasenews/helper/SQLiteTest.db?check_same_thread=False',
     echo=False
 )
@@ -150,15 +146,6 @@ class KeywordItem(Base):
     Keyword = Column(Text)
 
 
-# 用户信息表
-class UserItem(Base):
-    __tablename__ = 'userinfo'
-
-    username = Column(String, primary_key=True)
-    password = Column(String)
-    intro = Column(Text)
-
-
 # noinspection PyUnresolvedReferences
 def query_news_by_keyword(args):
     page = args["page"]
@@ -182,7 +169,7 @@ def query_news_by_keyword(args):
           ", Limit = " + str(limit))
 
     # 从数据库中查找相应记录
-    session = sessionmaker(bind=engine)()
+    session = sessionmaker(bind=data_engine)()
     query = (session.query(NewItem)
              .filter(NewItem.Content.ilike(keyword))  # 模糊搜索，不区分大小写
              .filter(and_(NewItem.DTime >= start_time, NewItem.DTime <= end_time)))  # 匹配日期
@@ -236,8 +223,10 @@ def query_statistics(force_update=False):
 
     print("未缓存统计数据，重新计算。")
     # merge和new两个表的区别：new表的数据是从网络上爬取来的，merge的数据从数据集中读取，new表中包含文章内容。
-    df_merge = pd.read_sql_query("SELECT * FROM merge_table", engine)
-    df_new = pd.read_sql_query("SELECT * FROM new_table", engine)
+    # noinspection SqlResolve,SqlNoDataSourceInspection
+    df_merge = pd.read_sql_query("SELECT * FROM merge_table", data_engine)
+    # noinspection SqlResolve,SqlNoDataSourceInspection
+    df_new = pd.read_sql_query("SELECT * FROM new_table", data_engine)
     # 使用内连接合并两个表，相当于扩充new表中的属性
     df_inner = pd.merge(df_merge, df_new, how='inner', on='UniqueID')
 
@@ -329,7 +318,8 @@ def query_statistics(force_update=False):
         })
 
     # KeywordCloud
-    df_keyword = pd.read_sql_query("SELECT * FROM keyword_table", engine)
+    # noinspection SqlResolve,SqlNoDataSourceInspection
+    df_keyword = pd.read_sql_query("SELECT * FROM keyword_table", data_engine)
     keywords_all = df_keyword["Keyword"].to_list()
 
     keywords = []
@@ -349,51 +339,3 @@ def query_statistics(force_update=False):
 
     statistics_data['updated'] = True
     return statistics_data
-
-
-def add_user(username, password, intro=""):
-    session = sessionmaker(bind=engine)()
-    try:
-        Base.metadata.create_all(engine)
-        exist_user = session.query(UserItem).filter_by(username=username).first()
-        if exist_user:
-            return 1
-        new_user = UserItem(username=username, password=password, intro=intro)
-        session.add(new_user)
-        session.commit()
-        return 0
-    except Exception as e:
-        print(e)
-        session.rollback()
-        return 100
-
-
-def delete_user(username, password):
-    session = sessionmaker(bind=engine)()
-    try:
-        Base.metadata.create_all(engine)
-        exist_user = session.query(UserItem).filter_by(username=username).first()
-        if not exist_user:
-            return 2
-        if exist_user.password != password:
-            return 1
-        session.delete(exist_user)
-        session.commit()
-        return 0
-    except Exception as e:
-        session.rollback()
-        return 100
-
-
-def query_user(username, password):
-    session = sessionmaker(bind=engine)()
-    try:
-        Base.metadata.create_all(engine)
-        exist_user = session.query(UserItem).filter_by(username=username).first()
-        if not exist_user:
-            return 2, None
-        if exist_user.password != password:
-            return 1, None
-        return 0, exist_user
-    except Exception as e:
-        return 100, None

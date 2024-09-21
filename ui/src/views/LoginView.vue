@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
-import {queryLogin, querySignup} from "@/utils/axiosUtil.js";
-import {useRouter} from "vue-router";
-import {ElNotification} from "element-plus";
-import Cookies from 'js-cookie';
+import { reactive, ref } from 'vue'
+import { queryLogin, querySignup } from '@/utils/axiosUtil.js'
+import { useRouter } from 'vue-router'
+import { ElNotification } from 'element-plus'
+import Cookies from 'js-cookie'
+import { useStore } from 'vuex'
+import { deepCopy } from '@/utils/funcsUtil'
 
 let isSignup = ref(false)
 
 const userData = reactive({
-  username: "",
-  password: "",
-  passwordAgain: "",
+  username: '',
+  password: '',
+  passwordAgain: ''
 })
 const router = useRouter()
+const store = useStore()
 const formRef = ref(null)
 
 const onClickLogin = () => {
   formRef.value.validate(async (valid) => {
     if (!valid) return
-    // TODO 登录
 
     const config_data = {
       username: userData.username,
-      password: userData.password,
+      password: userData.password
     }
 
     await queryLogin(config_data).then((res) => {
       if (res.code === 0) {
         // 登录成功，跳转到主页
-        // Cookies.set('token', res.data.token, {expires: 7})
+        Cookies.set('token', res.data.token, { expires: 7 })
+        delete res.data.token
+        store.commit('updateUserInfo', deepCopy(res.data))
         router.replace('/')
       } else if (res.code === 1) {
         // 密码错误
@@ -67,18 +71,20 @@ const onClickSign = () => {
   }
 
   // 第二次点击注册按钮，提交数据
-  // TODO 注册
   formRef.value.validate(async (valid) => {
     if (!valid) return
     const config_data = {
       username: userData.username,
-      password: userData.password,
+      password: userData.password
     }
 
     await querySignup(config_data).then((res) => {
       if (res.code === 0) {
         // 注册成功，跳转到homepage
-        useRouter().replace('/homepage')
+        Cookies.set('token', res.data.token, { expires: 7 })
+        delete res.data.token
+        store.commit('updateUserInfo', deepCopy(res.data))
+        router.replace('/')
       } else if (res.code === 1) {
         // 用户名已存在
         ElNotification({
@@ -104,8 +110,8 @@ const onClickSign = () => {
 
 
 const validatePassword = (rule, value, callback) => {
-  const regex = /^[a-zA-Z0-9_!@#$%^&*()-=+[\]{};':"\\|,.<>?]+$/;
-  if (!regex.test(value)) callback(new Error('密码只能由字母、数字、常用字符组成'));
+  const regex = /^[a-zA-Z0-9_!@#$%^&*()-=+[\]{};':"\\|,.<>?]+$/
+  if (!regex.test(value)) callback(new Error('密码只能由字母、数字、常用字符组成'))
   else callback()
 }
 
@@ -114,29 +120,28 @@ const validatePasswordAgain = (rule, value, callback) => {
   else callback()
 }
 
-
 const signupRules = reactive({
   username: [
-    {required: true, message: "请输入用户名", trigger: 'blur'}
+    { required: true, message: '请输入用户名', trigger: 'blur' }
   ],
   password: [
-    {required: true, message: "请输入密码", trigger: 'blur'},
-    {validator: validatePassword, trigger: 'blur'}
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { validator: validatePassword, trigger: 'blur' }
   ],
   passwordAgain: [
-    {required: true, message: "请再次输入密码", trigger: 'blur'},
-    {validator: validatePasswordAgain, trigger: 'blur'}
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    { validator: validatePasswordAgain, trigger: 'blur' }
   ]
 })
 
 const loginRules = reactive({
   username: [
-    {required: true, message: "请输入用户名", trigger: 'blur'}
+    { required: true, message: '请输入用户名', trigger: 'blur' }
   ],
   password: [
-    {required: true, message: "请输入密码", trigger: 'blur'},
-    {validator: validatePassword, trigger: 'blur'}
-  ],
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { validator: validatePassword, trigger: 'blur' }
+  ]
 })
 
 
@@ -149,19 +154,19 @@ const loginRules = reactive({
       <div class="title" v-else>用户登录</div>
 
       <el-form
-          :model="userData"
-          :rules="isSignup ? signupRules : loginRules"
-          ref="formRef"
-          label-width="auto"
-          style="max-width: 600px;">
+        :model="userData"
+        :rules="isSignup ? signupRules : loginRules"
+        ref="formRef"
+        label-width="auto"
+        style="max-width: 600px;">
         <el-form-item label="用户名" style="margin-bottom: 16px;" prop="username">
-          <el-input v-model="userData.username" placeholder="请输入用户名"/>
+          <el-input v-model="userData.username" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item label="密码" style="margin-bottom: 16px;" prop="password">
-          <el-input type="password" v-model="userData.password" placeholder="请输入密码" autocomplete="off"/>
+          <el-input type="password" v-model="userData.password" placeholder="请输入密码" autocomplete="off" />
         </el-form-item>
         <el-form-item label="确认密码" v-show="isSignup" style="margin-bottom: 16px;" prop="passwordAgain">
-          <el-input type="password" v-model="userData.passwordAgain" placeholder="请再次输入密码" autocomplete="off"/>
+          <el-input type="password" v-model="userData.passwordAgain" placeholder="请再次输入密码" autocomplete="off" />
         </el-form-item>
 
         <el-form-item style="margin-top: 25px;">

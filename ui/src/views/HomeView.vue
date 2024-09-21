@@ -20,7 +20,7 @@
         </div>
       </template>
       <div class="chart">
-        <VPieCharts :vdata="homeStatistics['ActorCountryCode']"/>
+        <VPieCharts :vdata="homeStatistics['ActorCountryCode']" />
       </div>
     </el-card>
 
@@ -36,7 +36,7 @@
         </div>
       </template>
       <div class="chart">
-        <VPieCharts :vdata="homeStatistics['MentionSourceName']"/>
+        <VPieCharts :vdata="homeStatistics['MentionSourceName']" />
       </div>
     </el-card>
 
@@ -52,7 +52,7 @@
         </div>
       </template>
       <div class="chart">
-        <VPieCharts :vdata="homeStatistics['EventRootCode']"/>
+        <VPieCharts :vdata="homeStatistics['EventRootCode']" />
       </div>
     </el-card>
 
@@ -66,7 +66,7 @@
         </div>
       </template>
       <div class="chart">
-        <VPieCharts :vdata="homeStatistics['MentionDocTone']"/>
+        <VPieCharts :vdata="homeStatistics['MentionDocTone']" />
       </div>
     </el-card>
 
@@ -80,7 +80,7 @@
         </div>
       </template>
       <div class="chart">
-        <VPieCharts :vdata="homeStatistics['NewsProportion']"/>
+        <VPieCharts :vdata="homeStatistics['NewsProportion']" />
       </div>
     </el-card>
 
@@ -94,7 +94,7 @@
         </div>
       </template>
       <div class="chart">
-        <VWordCloud :vdata="homeStatistics['KeywordCloud']"/>
+        <VWordCloud :vdata="homeStatistics['KeywordCloud']" />
       </div>
     </el-card>
 
@@ -104,15 +104,15 @@
 <script setup lang="ts">
 import VPieCharts from '@/components/VPieCharts.vue'
 import VWordCloud from '@/components/VWordCloud.vue'
-import {queryHomeStatistics} from '@/utils/axiosUtil.js'
-import {deepCopy} from '@/utils/funcsUtil.js'
-import {onMounted, computed} from 'vue'
-import {useStore} from 'vuex'
+import { queryHomeStatistics } from '@/utils/axiosUtil.js'
+import { deepCopy } from '@/utils/funcsUtil.js'
+import { onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
 
 const store = useStore()
 
 const homeStatistics = computed({
-  get: () => store.state.homeStatistics,
+  get: () => store.state.homeStatistics
 })
 
 onMounted(async () => {
@@ -122,7 +122,7 @@ onMounted(async () => {
 // 请求后端首页统计信息
 async function getHomeStatistics() {
   await queryHomeStatistics().then(res => {
-    if (res.code === 0) store.commit("updateHomeStatistics", deepCopy(res.data))
+    if (res.code === 0) store.commit('updateHomeStatistics', deepCopy(res.data))
   })
 }
 
