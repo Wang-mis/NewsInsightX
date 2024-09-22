@@ -30,19 +30,20 @@
         <h2>Analysis</h2>
       </el-menu-item>
 
-      <!-- TODO 个人主页 -->
-      <el-menu-item index="/">
-        <el-icon style="font-size: 2em;">
-          <User />
-        </el-icon>
-        <h2>TODO About Me</h2>
-      </el-menu-item>
 
       <el-menu-item @click="handelSync">
         <el-icon style="font-size: 2em;">
           <Refresh />
         </el-icon>
         <h2>Synchronize</h2>
+      </el-menu-item>
+
+      <!-- TODO 个人主页 -->
+      <el-menu-item index="/">
+        <el-icon style="font-size: 2em;">
+          <User />
+        </el-icon>
+        <h2>{{ 'User : ' + getUsername }}</h2>
       </el-menu-item>
     </el-menu>
 
@@ -55,8 +56,20 @@
 
 <script setup lang="ts">
 import { Refresh, Search, DataAnalysis, User } from '@element-plus/icons-vue'
-import { RouterView } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+
+const store = useStore()
+
+const getUsername = computed(() => {
+  if (store.state.userinfo === null ||
+    store.state.userinfo === undefined ||
+    !('username' in store.state.userinfo))
+    return 'Not Login'
+  return store.state.userinfo.username
+})
 
 
 const handelSync = () => {

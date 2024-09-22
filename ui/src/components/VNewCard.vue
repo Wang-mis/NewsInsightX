@@ -3,26 +3,26 @@
   <el-card shadow="hover" @click="dialogVisible = true">
     <div style="border-bottom: 1px dashed #cccccc;">
       <el-icon class="new-item-icon">
-        <Document/>
+        <Document />
       </el-icon>
       {{ data.Title }}
     </div>
 
     <div class="new-item">
       <el-icon class="new-item-icon">
-        <Avatar/>
+        <Avatar />
       </el-icon>
       {{ data.Author }}
     </div>
     <div class="new-item" style="color: #aaaaaa">
       <el-icon class="new-item-icon">
-        <Clock/>
+        <Clock />
       </el-icon>
       <span class="post-meta">{{ publishTimeFormat(data.DTime) }}</span>
     </div>
     <div class="new-item" style="color: #aaaaaa">
       <el-icon class="new-item-icon">
-        <Printer/>
+        <Printer />
       </el-icon>
       <span class="post-meta"> {{ data.MentionSourceName }} </span>
     </div>
@@ -30,19 +30,20 @@
 
 
   <el-dialog
-      v-model="dialogVisible"
-      :title="data.Title"
-      width="60%"
-      class="custom-dialog"
-      :lock-scroll="false"
-      append-to-body
-      @close="dialogVisible = false">
+    v-model="dialogVisible"
+    :title="data.Title"
+    width="50%"
+    class="custom-dialog"
+    :lock-scroll="false"
+    append-to-body
+    @close="dialogVisible = false"
+  >
 
     <!--<editor-fold desc="标题">-->
     <template #header>
-      <div class="new-item" style="font-size: 22px; color: #222222">
+      <div class="new-item" style="font-size: 23px; color: black">
         <el-icon class="new-item-icon">
-          <Document/>
+          <Document />
         </el-icon>
         {{ data.Title }}
       </div>
@@ -54,7 +55,7 @@
         <!--<editor-fold desc="来源">-->
         <div class="new-item">
           <el-icon class="new-item-icon">
-            <Printer/>
+            <Printer />
           </el-icon>
           {{ data.MentionSourceName }}
         </div>
@@ -62,7 +63,7 @@
         <!--<editor-fold desc="作者">-->
         <div class="new-item">
           <el-icon class="new-item-icon">
-            <Avatar/>
+            <Avatar />
           </el-icon>
           {{ data.Author }}
         </div>
@@ -73,35 +74,51 @@
         <!--<editor-fold desc="时间">-->
         <div class="new-item" style="color: #aaaaaa">
           <el-icon class="new-item-icon">
-            <Clock/>
+            <Clock />
           </el-icon>
-          <span class="post-meta">{{ publishTimeFormat(data.DTime) }}</span>
+          <span class="post-meta" style="white-space: nowrap">{{ publishTimeFormat(data.DTime) }}</span>
         </div>
         <!--</editor-fold>-->
         <!--<editor-fold desc="网址">-->
         <div class="new-item" style="color: #67C23A">
           <el-icon class="new-item-icon">
-            <Link/>
+            <Link />
           </el-icon>
-          <el-link type="success" :href="data.MentionIdentifier" target="_blank">{{ data.MentionIdentifier }}</el-link>
+          <el-link type="success" :href="data.MentionIdentifier" target="_blank" style="white-space: nowrap">
+            {{ formatUrl(data.MentionIdentifier, 60, 30) }}
+          </el-link>
         </div>
         <!--</editor-fold>-->
       </div>
     </div>
 
-    <div style="margin-top: 0.7rem; white-space: pre-line; font-size: 16px"
-         v-html="processArticleContent(data.Content)"></div>
+    <div
+      style="
+        margin-top: 0.7rem;
+        white-space: pre-line;
+        font-size: 17px;
+        line-height: 1.6;
+        text-align: justify;
+        text-indent: 2em;
+        padding: 0 1em;
+        color: #222222;
+      "
+    >
+      <p v-for="line in processArticleContent" style="padding-bottom: 0.5em">
+        {{ line }}
+      </p>
+    </div>
 
   </el-dialog>
 
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
-import {Avatar, Clock, Document, Link, Printer} from '@element-plus/icons-vue'
-import {publishTimeFormat} from '@/utils/funcsUtil.js'
+import { computed, ref } from 'vue'
+import { Avatar, Clock, Document, Link, Printer } from '@element-plus/icons-vue'
+import { publishTimeFormat } from '@/utils/funcsUtil.js'
 
-defineProps({
+const props = defineProps({
   data: {
     type: Object,
     required: true
@@ -109,18 +126,17 @@ defineProps({
 })
 const dialogVisible = ref(false)
 
-const processArticleContent = (content) => {
-  let newContent = ""
-  let lines = content.split('\n')
-  lines.forEach(line => {
-    line.trim()
-    if (line === "") return
+const processArticleContent = computed(() => {
+  let lines = props.data.Content.split('\n')
+  lines = lines.map(line => line.trim())
+  return lines
+})
 
-    line = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + line + '\n'
-    newContent += line
-  })
+const formatUrl = (url, frontLen, rearLen) => {
+  if (url.length > frontLen + rearLen)
+    return url.slice(0, frontLen) + '......' + url.slice(-rearLen)
 
-  return newContent
+  return url
 }
 
 </script>

@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 import { useStore } from 'vuex'
 import { queryCheckToken } from '@/utils/axiosUtil'
 import { ElNotification } from 'element-plus'
+import { deepCopy } from '@/utils/funcsUtil'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,8 @@ router.beforeEach((to, from, next) => {
   // 检查token
   queryCheckToken(token).then((res) => {
     if (res.code === 0) {
+      // token认证成功，存储用户数据
+      store.commit('updateUserInfo', deepCopy(res.data))
       next()
       return
     }
