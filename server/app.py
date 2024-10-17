@@ -1,9 +1,18 @@
+# -*- coding:utf-8 -*-
+
+import io
+import sys
+
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 from datasets.users import query_user, add_user, delete_user, check_user_token
 from utils.helper import return_info
-from datasets.SQLiteUtil import query_news_by_keyword, query_statistics
+from datasets.SQLiteUtil import query_news, query_statistics, write_merge_table_by_file, \
+    write_new_table_by_file, write_keyword_table_by_file, query_article_counts_day, write_all_table_by_files, \
+    query_news_by_id
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -11,6 +20,20 @@ cors = CORS(app)
 app.config['CORS_HEADER'] = 'Content-Type'
 
 
+@app.route("/dataset/update_day", methods=["GET"])
+@cross_origin()
+def update_day():
+    data = request.get_json()
+    day = data.get("day")
+    # 接收到更新数据请求，更新数据
+    print("接收到更新数据请求，更新数据。")
+    write_all_table_by_files(day)
+    print("更新数据完成。")
+
+    return return_info(0, "success", "", {})
+
+
+# region Users
 @app.route("/user/login", methods=["POST"])
 @cross_origin()
 def user_login():
@@ -98,30 +121,57 @@ def user_delete():
     return return_info(code, "success" if code == 0 else "error", msg, {})
 
 
+# endregion
+
+
 @app.route("/querynews", methods=["POST"])
 @cross_origin()
 def query_news_api():
     args = request.get_json()
     try:
-        print(args)
-        data = query_news_by_keyword(args=args)
+        data = query_news(args)
         return return_info(0, "success", "成功", data)
     except Exception as e:
         print(e)
     return return_info(100, "error", "未知错误", {})
 
 
-@app.route("/homepage", methods=["GET"])
+@app.route("/querynews_by_id", methods=["POST"])
+@cross_origin()
+def query_news_by_id_api():
+    unique_id = request.get_json()["id"]
+    try:
+        data = query_news_by_id(unique_id)
+        return return_info(0, "success", "成功", data)
+    except Exception as e:
+        print(e)
+    return return_info(100, "error", "未知错误", {})
+
+
+@app.route("/homepage", methods=["POST"])
 @cross_origin()
 def query_home_statistics_api():
     try:
-        force_update = bool(int(request.args.get('update', default='0')))
-        data = query_statistics(force_update)
+        args = request.get_json()
+        data = query_statistics(args)
         return return_info(0, "success", "成功", data)
 
     except Exception as e:
         print("请求统计数据失败。\n", e)
 
+    return return_info(100, "error", "未知错误", {})
+
+
+@app.route("/query/counts_day", methods=["POST"])
+@cross_origin()
+def query_article_counts_day_api():
+    args = request.get_json()
+    try:
+        print(args)
+        data = query_article_counts_day(args=args)
+        return return_info(0, "success", "成功", data)
+    except Exception as e:
+        print(e)
 
     return return_info(100, "error", "未知错误", {})
 

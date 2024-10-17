@@ -1,102 +1,113 @@
 <template>
   <div class="intro-container">
-    <el-card>// TODO 这里做一些简介</el-card>
-    <el-card>
-      // TODO 这里做一些卡片展示、当前时间、系统展示的数据时间段
-    </el-card>
+    <div class="intro">
+      <ArticlesCountDisplay :start-date="dataTimeRange[0]" :end-date="dataTimeRange[1]" />
+    </div>
+    <div class="separator-container">
+      <div class="separator"></div>
+    </div>
+    <div class="info">
+      <!-- todo -->
+      <el-form style="width: 100%;">
+        <el-form-item :label="$t('info.dataTimeRange')">
+          <el-date-picker
+            v-model="dataTimeRange"
+            type="daterange"
+            :range-separator="$t('search.timeRangeSep')"
+            :start-placeholder="$t('search.startTime')"
+            :end-placeholder="$t('search.endTime')"
+            value-format="YYYYMMDD"
+            format="YY/MM/DD"
+            :disabled-date="(date) => date.getTime() > Date.now()"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item :label="$t('info.displayTimeRange')">
+          <el-date-picker
+            v-model="displayTimeRange"
+            type="daterange"
+            :range-separator="$t('search.timeRangeSep')"
+            :start-placeholder="$t('search.startTime')"
+            :end-placeholder="$t('search.endTime')"
+            value-format="YYYYMMDD"
+            format="YY/MM/DD"
+            :disabled-date="(date) => date.getTime() > Date.now()"
+            :clearable="false"
+          />
+        </el-form-item>
+        <div
+          v-if="homeStatistics !== null"
+          class="number-info-contatiner"
+          style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding-top: 10px;">
+
+          <el-statistic :title="$t('info.totalCount')" :value="homeStatistics['totalCount']" />
+          <el-statistic :title="$t('info.timeRangeCount')" :value="homeStatistics['timeRangeCount']" />
+          <el-statistic :title="$t('info.yesterdayCount')" :value="homeStatistics['yesterdayCount']" />
+        </div>
+      </el-form>
+    </div>
   </div>
 
   <div class="card-container" v-if="homeStatistics !== null">
-
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>各个国家的新闻统计
-            <el-tag>TOP16</el-tag>
-          </h3>
-          <el-tag type="info" size="large" effect="dark">
-            <h2>ActorCountryCode</h2>
-          </el-tag>
-        </div>
-      </template>
-      <div class="chart">
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ $t('chartsName.ActorCountryCode') }}
+          <el-tag>TOP 8</el-tag>
+        </h3>
+      </div>
+      <div class="card-separator"></div>
+      <div class="card-body">
         <VPieCharts :vdata="homeStatistics['ActorCountryCode']" />
       </div>
-    </el-card>
+    </div>
 
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>各个媒体的新闻统计
-            <el-tag>TOP8</el-tag>
-          </h3>
-          <el-tag type="info" size="large" effect="dark">
-            <h2>MentionSourceName</h2>
-          </el-tag>
-        </div>
-      </template>
-      <div class="chart">
-        <VPieCharts :vdata="homeStatistics['MentionSourceName']" />
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ $t('chartsName.shortMentionSourceName') }}
+          <el-tag>TOP 8</el-tag>
+        </h3>
       </div>
-    </el-card>
+      <div class="card-separator"></div>
+      <div class="card-body">
+        <VPieCharts :vdata="shortMentionSourceName" />
+      </div>
+    </div>
 
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>各个类型的新闻统计
-            <el-tag>TOP8</el-tag>
-          </h3>
-          <el-tag type="info" size="large" effect="dark">
-            <h2>EventRootCode</h2>
-          </el-tag>
-        </div>
-      </template>
-      <div class="chart">
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ $t('chartsName.EventRootCode') }}
+          <el-tag>TOP 8</el-tag>
+        </h3>
+      </div>
+      <div class="card-separator"></div>
+      <div class="card-body">
         <VPieCharts :vdata="homeStatistics['EventRootCode']" />
       </div>
-    </el-card>
+    </div>
 
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>积极/消极的新闻统计</h3>
-          <el-tag type="info" size="large" effect="dark">
-            <h2>MentionDocTone</h2>
-          </el-tag>
-        </div>
-      </template>
-      <div class="chart">
+    <div class="card">
+      <div class="card-header"><h3>{{ $t('chartsName.MentionDocTone') }}</h3></div>
+      <div class="card-separator"></div>
+      <div class="card-body">
         <VPieCharts :vdata="homeStatistics['MentionDocTone']" />
       </div>
-    </el-card>
+    </div>
 
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>已有新闻文章占比</h3>
-          <el-tag type="info" size="large" effect="dark">
-            <h2>NewsProportion</h2>
-          </el-tag>
-        </div>
-      </template>
-      <div class="chart">
+    <div class="card">
+      <div class="card-header"><h3>{{ $t('chartsName.NewsProportion') }}</h3></div>
+      <div class="card-separator"></div>
+      <div class="card-body">
         <VPieCharts :vdata="homeStatistics['NewsProportion']" />
       </div>
-    </el-card>
+    </div>
 
-    <el-card body-style="padding: 0;">
-      <template #header>
-        <div class="card-header">
-          <h3>热点词云</h3>
-          <el-tag type="info" size="large" effect="dark">
-            <h2>KeywordCloud </h2>
-          </el-tag>
-        </div>
-      </template>
-      <div class="chart">
+    <div class="card">
+      <div class="card-header"><h3>{{ $t('chartsName.KeywordCloud') }}</h3></div>
+      <div class="card-separator"></div>
+      <div class="card-body">
         <VWordCloud :vdata="homeStatistics['KeywordCloud']" />
       </div>
-    </el-card>
+    </div>
 
   </div>
 </template>
@@ -106,51 +117,160 @@ import VPieCharts from '@/components/VPieCharts.vue'
 import VWordCloud from '@/components/VWordCloud.vue'
 import { queryHomeStatistics } from '@/utils/axiosUtil.js'
 import { deepCopy } from '@/utils/funcsUtil.js'
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import ArticlesCountDisplay from '@/components/ArticlesCountDisplay.vue'
 
 const store = useStore()
 
-const homeStatistics = computed({
-  get: () => store.state.homeStatistics
+function formatDate(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // 月份从0开始，需加1
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}${month}${day}`
+}
+
+const yesterday = new Date()
+yesterday.setDate(new Date().getDate() - 2)
+const yesterdayStr = formatDate(yesterday)
+
+const sevenDaysAgo = new Date()
+sevenDaysAgo.setDate(new Date().getDate() - 8)
+const sevenDaysAgoStr = formatDate(sevenDaysAgo)
+
+const dataTimeRange = ref(['20240915', yesterdayStr])
+const displayTimeRange = ref([sevenDaysAgoStr, yesterdayStr])
+
+const homeStatistics = computed(() => store.state.homeStatistics)
+const shortMentionSourceName = computed(() => {
+  const data = store.state.homeStatistics['MentionSourceName']
+  return data.map(x => {
+    return { name: x['name'].split('.')[0], value: x['value'] }
+  })
 })
 
-onMounted(async () => {
-  await getHomeStatistics()
-})
+onMounted(async () => await getHomeStatistics())
 
 // 请求后端首页统计信息
 async function getHomeStatistics() {
-  await queryHomeStatistics().then(res => {
+  const configData = {
+    'forceUpdate': false,
+    'startDate': displayTimeRange.value[0],
+    'endDate': displayTimeRange.value[1]
+  }
+  await queryHomeStatistics(configData).then(res => {
     if (res.code === 0) store.commit('updateHomeStatistics', deepCopy(res.data))
   })
 }
 
+// 修改timeRange后更新数据
+watch(displayTimeRange, async () => {
+  console.log('检测到用户修改当前显示时间段，更新数据。')
+  await getHomeStatistics()
+})
+
 </script>
 
 <style lang="scss" scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+$intro-container-height: 280px;
+$intro-width-percent: 80%;
+$info-width-percent: calc(100% - $intro-width-percent);
+
 
 .intro-container {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 4fr 1fr;
-  grid-gap: 1rem;
+  background-color: white;
+  color: #2c3e50;
+
+  margin-top: 15px;
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+
+  display: flex;
+  width: 100%;
+  height: $intro-container-height;
+
+  .intro {
+    padding: 20px;
+
+    width: $intro-width-percent;
+    height: 100%;
+  }
+
+  .separator-container {
+    height: 100%;
+    padding: 20px 0;
+
+    .separator {
+      height: 100%;
+      border-left: 1px solid #e4e7ed;
+    }
+
+  }
+
+  .info {
+    padding: 20px;
+
+    width: $info-width-percent;
+    min-width: 300px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .card-container {
-  margin-top: 1rem;
+  padding: 15px 0;
+  width: 100%;
+  height: calc(100vh - $intro-container-height - 55px);
+
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 1rem;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 12px;
+
+  .card {
+    background-color: white;
+    color: #2c3e50;
+
+    min-height: 200px;
+    min-width: 200px;
+
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+
+    display: flex;
+    flex-direction: column;
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 45px;
+      padding: 5px 20px;
+    }
+
+    .card-separator {
+      border-top: 1px solid #e4e7ed;
+    }
+
+    .card-body {
+      width: 100%;
+      flex-grow: 1;
+    }
+  }
 }
 
-.chart {
-  width: 100%;
-  height: 230px;
+@media (max-width: 800px) {
+  .card-container {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
 }
+
 </style>

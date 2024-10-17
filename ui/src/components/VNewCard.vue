@@ -1,19 +1,21 @@
 <!-- 这是前端页面展示的新闻文章模版 -->
 <template>
-  <el-card shadow="hover" @click="dialogVisible = true">
-    <div style="border-bottom: 1px dashed #cccccc;">
-      <el-icon class="new-item-icon">
-        <Document />
-      </el-icon>
-      {{ data.Title }}
+  <el-card class="article-card" shadow="hover" @click="dialogVisible = true">
+    <div
+      ref="titleBox"
+      style="border-bottom: 1px dashed #cccccc; line-height: 1.5em; height: calc(1.5em * 2 + 5px); padding-bottom: 10px; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span v-html="processTitle(data.Title)"></span>
     </div>
 
-    <div class="new-item">
-      <el-icon class="new-item-icon">
+    <div class="new-item"
+         style="line-height: 1.5em; height: calc(1.5em * 2 + 10px); padding: 10px 0; align-items: flex-start;overflow: hidden;">
+      <el-icon class="new-item-icon" style="padding-top: 7px;">
         <Avatar />
       </el-icon>
       {{ data.Author }}
     </div>
+
     <div class="new-item" style="color: #aaaaaa">
       <el-icon class="new-item-icon">
         <Clock />
@@ -114,14 +116,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Avatar, Clock, Document, Link, Printer } from '@element-plus/icons-vue'
 import { publishTimeFormat } from '@/utils/funcsUtil.js'
+import 'tippy.js/dist/tippy.css'
+import tippy from 'tippy.js'
+import 'tippy.js/themes/light.css'
 
 const props = defineProps({
   data: {
     type: Object,
     required: true
+  },
+  keywords: {
+    type: Array,
+    default: []
   }
 })
 const dialogVisible = ref(false)
@@ -132,16 +141,42 @@ const processArticleContent = computed(() => {
   return lines
 })
 
+const processTitle = (title: string) => {
+  props.keywords.forEach(keyword => {
+    if (keyword !== '') {
+      title = title.replace(new RegExp(keyword, 'gi'),
+        (match) => '<span style="background-color: yellow;">' + match + '</span>')
+    }
+  })
+
+  return title
+}
+
 const formatUrl = (url, frontLen, rearLen) => {
   if (url.length > frontLen + rearLen)
-    return url.slice(0, frontLen) + '......' + url.slice(-rearLen)
-
+    return url.slice(0, frontLen) + '......' + (rearLen > 0 ? url.slice(-rearLen) : '')
   return url
 }
+
+const titleBox = ref(null)
+
+onMounted(() => {
+  tippy(titleBox.value, {
+    theme: 'light',
+    content: props.data.Title,
+    placement: 'right',
+    arrow: false,
+    delay: [400, 0]
+  })
+})
 
 </script>
 
 <style lang="scss" scoped>
+
+.article-card {
+  cursor: default;
+}
 
 .new-item-icon {
   margin-right: 0.2rem;
@@ -162,6 +197,7 @@ const formatUrl = (url, frontLen, rearLen) => {
   display: flex;
   justify-content: flex-end;
 }
+
 </style>
 
 <style>

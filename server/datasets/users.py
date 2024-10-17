@@ -1,7 +1,9 @@
+#-*- coding:utf-8 -*-
+
 import random
 from datetime import datetime, timedelta
 
-from sqlalchemy import create_engine, Column, String, DateTime, Text, Float
+from sqlalchemy import create_engine, Column, String, DateTime, Text, Float, update
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 users_engine = create_engine(
@@ -152,6 +154,7 @@ def query_user(username: str, password: str, token_store_hours: float = 7 * 24) 
     session = sessionmaker(bind=users_engine)()
     try:
         Base.metadata.create_all(users_engine)
+        # 查询用户登录数据
         exist_user = session.query(UserLoginData).filter_by(username=username).first()
         if not exist_user:
             session.close()
@@ -161,7 +164,8 @@ def query_user(username: str, password: str, token_store_hours: float = 7 * 24) 
             return 1, None, None
 
         # 生成新的token
-        exist_user.token = create_token()
+        token = create_token()
+        exist_user.token = token
         exist_user.token_store_time = datetime.now()
         exist_user.token_store_hours = token_store_hours
         session.commit()
@@ -173,10 +177,9 @@ def query_user(username: str, password: str, token_store_hours: float = 7 * 24) 
             return 2, None, None
 
         data = user_info.to_dict()
-        token = exist_user.token
         session.close()
         return 0, data, token
     except Exception as e:
-        print(e)
+        print("用户登录错误：", e)
         session.close()
         return 100, None, None

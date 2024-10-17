@@ -1,0 +1,12 @@
+nohup: ignoring input
+
+> ui@0.0.0 dev
+> vite
+
+server.force is deprecated, use optimizeDeps.force instead
+Forced re-optimization of dependencies
+
+  VITE v4.5.3  ready in 696 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://172.20.48.117:5173/
