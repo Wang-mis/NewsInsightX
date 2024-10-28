@@ -42,7 +42,8 @@ export default {
     wordCountTip: '请选择',
     query: '查询',
     totalPre: '共',
-    totalPost: '条新闻'
+    totalPost: '条新闻',
+    addToList: '加入清单'
   },
   countrys: {
     Afghanistan: '阿富汗',

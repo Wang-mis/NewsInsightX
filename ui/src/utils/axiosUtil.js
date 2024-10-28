@@ -71,7 +71,7 @@ export function queryNews(config_data) {
 }
 
 export function queryNewsById(config_data) {
-  return request({ url: '/api/querynews_by_id', method: 'POST', data: config_data })
+  return request({ url: '/api/query_news_by_id', method: 'POST', data: config_data })
 }
 
 // 首页统计信息
@@ -82,4 +82,8 @@ export function queryHomeStatistics(configData) {
 // 请求时间段内每一天的新闻数量
 export function queryArticlesCountsDay(configData) {
   return request({ url: '/api/query/counts_day', method: 'POST', data: configData })
+}
+
+export function updateBiaseerData(configData) {
+  return request({ url: '/biaseer/update_data', method: 'POST', data: configData })
 }

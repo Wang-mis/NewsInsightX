@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-bar">
+  <div class="nav-bar" v-if="store.state.userinfo !== null && store.state.userinfo !== undefined">
     <NavBar />
   </div>
   <div id="page-container">
@@ -26,7 +26,21 @@ const getUsername = computed(() => {
 
 </script>
 
-<style>
+<style lang="scss">
+@font-face {
+  font-family: 'Inter';
+  src: url('/public/fonts/Inter-4.0/InterVariable.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/public/fonts/Inter-4.0/extras/ttf/Inter-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
 html body {
   margin: 0;
   padding: 0;
@@ -48,7 +62,7 @@ html body {
 }
 
 #page-container {
-  padding: 40px 20px 0 20px;
+  padding: 40px 0 0 0;
   width: 100%;
 }
 </style>

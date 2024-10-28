@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onBeforeMount, reactive, ref } from 'vue'
 import { queryLogin } from '@/utils/axiosUtil.js'
 import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
@@ -77,6 +77,11 @@ const loginRules = reactive({
   ]
 })
 
+onBeforeMount(() => {
+  store.commit('clearUserInfo')
+  document.title = "Login"
+})
+
 </script>
 
 <template>
@@ -124,7 +129,7 @@ const loginRules = reactive({
                 </el-button>
               </el-form-item>
             </el-form>
-            <div class="to-sign" style="width: 100%; display: flex; justify-content: center;">
+            <div class="to-sign" style="width: 100%; display: flex; justify-content: center; color: #2c3e50">
               <span>Don't have an account? <a href="#">Get started.</a></span>
             </div>
           </div>
@@ -132,16 +137,22 @@ const loginRules = reactive({
       </div>
     </div>
     <div class="bottom-bar-container">
-
+      <div class="create-by" v-show="false">
+        <span>Created by</span>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg" alt="Vue Logo" width="55"
+             height="55" style="padding: 0 10px;">
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-$left-bar-width: 20%;
-$bottom-bar-height: 7%;
+@import "public/styles/variables.scss";
+
 
 .login-page-container {
+  font-family: "Inter", sans-serif;
+
   width: 100%;
   height: 100vh;
   position: absolute;
@@ -159,6 +170,22 @@ $bottom-bar-height: 7%;
     width: 100%;
     height: $bottom-bar-height;
     background-color: #2f2f2f;
+    padding: 0 40px;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+
+    .create-by {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      color: white;
+
+      font-family: "Inter", sans-serif;
+      font-size: 22px;
+    }
   }
 
   .login-container {

@@ -310,6 +310,10 @@ def write_all_table_by_files(day):
 
 # endregion
 
+def update():
+    statistics_data['updated'] = False
+    counts_day_data['updated'] = False
+
 
 def query_news(args):
     page = args["page"]
@@ -319,6 +323,7 @@ def query_news(args):
     case_sensitive = bool(args['caseSensitive'])
     query_by_content = bool(args['queryByContent'])
     word_match = bool(args['wordMatch'])
+    only_id = bool(args['onlyId'])
     timerange = args["date"]
     word_count_range = args['wordCount']
     sources = args['sources']
@@ -420,28 +425,29 @@ def query_news(args):
 
         total_records = session.query(now_query).count()  # 获取记录条数
 
-        # 按日期降序排序，获取当前页面的所有记录，results为NewItem对象的数组
-        results = session.query(now_query).order_by(now_query.c.DTime.desc()).offset(offset_data).limit(limit)
+        if only_id:
+            # 如果only_id == True，则返回所有新闻的ID列表，不排序
+            results = session.query(now_query.c.UniqueID).offset(offset_data).limit(limit)
+            return {"ids": [t[0] for t in results], "totalRecords": total_records}
+        else:
+            # 按日期降序排序，获取当前页面的所有记录，results为NewItem对象的数组
+            results = session.query(now_query).order_by(now_query.c.DTime.desc()).offset(offset_data).limit(limit)
+            # 将NewItem对象数组转化为字典的数组，便于以json的格式传给前端
+            news_list = []
+            for news in results:
+                news_list.append({
+                    'UniqueID': news.UniqueID,
+                    'Title': news.Title,
+                    'Author': news.Author,
+                    'PTime': news.PTime,
+                    'DTime': news.DTime,
+                    'MentionSourceName': news.MentionSourceName,
+                    'MentionIdentifier': news.MentionIdentifier,
+                    'Content': news.Content
+                })
 
-        # 将NewItem对象数组转化为字典的数组，便于以json的格式传给前端
-        news_list = []
-        for news in results:
-            news_list.append({
-                'UniqueID': news.UniqueID,
-                'Title': news.Title,
-                'Author': news.Author,
-                'PTime': news.PTime,
-                'DTime': news.DTime,
-                'MentionSourceName': news.MentionSourceName,
-                'MentionIdentifier': news.MentionIdentifier,
-                'Content': news.Content
-            })
-
-    # 将总记录数和当前页面的所有记录数据传给前端
-    return {
-        "totalRecords": total_records,
-        "newsList": news_list
-    }
+            # 将总记录数和当前页面的所有记录数据传给前端
+            return {"totalRecords": total_records, "newsList": news_list}
 
 
 def query_news_by_id(unique_id: str):
@@ -458,6 +464,48 @@ def query_news_by_id(unique_id: str):
             'MentionIdentifier': news.MentionIdentifier,
             'Content': news.Content
         }
+
+
+def query_news_by_ids(ids: list[str]):
+    """ 根据ID列表查询所有的News数据 """
+    Session = sessionmaker(bind=engine)
+    with Session() as session:
+        query = session.query(NewItem).filter(NewItem.UniqueID.in_(ids)).subquery()
+        query = session.query(query)
+
+        news_list: list[tuple] = []
+        for news in query:
+            news_list.append(tuple(news))
+
+        return {"news_list": news_list}
+
+
+def query_mentions_by_ids(ids: list[str]):
+    """ 根据ID列表查询所有的Mentions数据 """
+    Session = sessionmaker(bind=engine)
+    with Session() as session:
+        query = session.query(MergeItem).filter(MergeItem.UniqueID.in_(ids)).subquery()
+        query = session.query(query)
+
+        mentions_list: list[tuple] = []
+        for mention in query:
+            mentions_list.append(tuple(mention))
+
+        return {"mentions_list": mentions_list}
+
+
+def query_keywords_by_ids(ids: list[str]):
+    """ 根据ID列表查询所有的Mentions数据 """
+    Session = sessionmaker(bind=engine)
+    with Session() as session:
+        query = session.query(KeywordItem).filter(KeywordItem.UniqueID.in_(ids)).subquery()
+        query = session.query(query)
+
+        keywords_list: list[tuple] = []
+        for keyword in query:
+            keywords_list.append(tuple(keyword))
+
+        return {"keywords_list": keywords_list}
 
 
 def query_statistics(args):
@@ -594,18 +642,21 @@ def query_statistics(args):
         # endregion
 
         # 新闻总数
-        total_count = session.query(NewItem).count()
+        # total_count = session.query(NewItem).count()
+        total_count = session.query(MergeItem).count()
         statistics_data["totalCount"] = total_count
 
         # 时间段内新闻数
-        time_range_count = session.query(new_query_in_date).count()
+        # time_range_count = session.query(new_query_in_date).count()
+        time_range_count = session.query(merge_query_in_date).count()
         statistics_data["timeRangeCount"] = time_range_count
 
         # 昨日新闻数
         yesterday = datetime.now() - timedelta(days=2)
         yesterday = int(yesterday.strftime('%Y%m%d'))
         print(yesterday)
-        yesterday_count = session.query(NewItem).filter(NewItem.DTime == yesterday).count()
+        # yesterday_count = session.query(NewItem).filter(NewItem.DTime == yesterday).count()
+        yesterday_count = session.query(MergeItem).filter(MergeItem.Day == yesterday).count()
         statistics_data["yesterdayCount"] = yesterday_count
 
         print("统计数据计算完成。")

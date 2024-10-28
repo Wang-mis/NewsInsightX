@@ -1,114 +1,114 @@
 <template>
-  <div class="intro-container">
-    <div class="intro">
-      <ArticlesCountDisplay :start-date="dataTimeRange[0]" :end-date="dataTimeRange[1]" />
-    </div>
-    <div class="separator-container">
-      <div class="separator"></div>
-    </div>
-    <div class="info">
-      <!-- todo -->
-      <el-form style="width: 100%;">
-        <el-form-item :label="$t('info.dataTimeRange')">
-          <el-date-picker
-            v-model="dataTimeRange"
-            type="daterange"
-            :range-separator="$t('search.timeRangeSep')"
-            :start-placeholder="$t('search.startTime')"
-            :end-placeholder="$t('search.endTime')"
-            value-format="YYYYMMDD"
-            format="YY/MM/DD"
-            :disabled-date="(date) => date.getTime() > Date.now()"
-            disabled
-          />
-        </el-form-item>
-        <el-form-item :label="$t('info.displayTimeRange')">
-          <el-date-picker
-            v-model="displayTimeRange"
-            type="daterange"
-            :range-separator="$t('search.timeRangeSep')"
-            :start-placeholder="$t('search.startTime')"
-            :end-placeholder="$t('search.endTime')"
-            value-format="YYYYMMDD"
-            format="YY/MM/DD"
-            :disabled-date="(date) => date.getTime() > Date.now()"
-            :clearable="false"
-          />
-        </el-form-item>
-        <div
-          v-if="homeStatistics !== null"
-          class="number-info-contatiner"
-          style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding-top: 10px;">
+  <div class="home-page-container">
+    <div class="intro-container">
+      <div class="intro">
+        <ArticlesCountDisplay :start-date="dataTimeRange[0]" :end-date="dataTimeRange[1]" />
+      </div>
+      <div class="separator-container">
+        <div class="separator"></div>
+      </div>
+      <div class="info">
+        <el-form style="width: 100%;">
+          <el-form-item :label="$t('info.dataTimeRange')">
+            <el-date-picker
+              v-model="dataTimeRange"
+              type="daterange"
+              :range-separator="$t('search.timeRangeSep')"
+              :start-placeholder="$t('search.startTime')"
+              :end-placeholder="$t('search.endTime')"
+              value-format="YYYYMMDD"
+              format="YY/MM/DD"
+              :disabled-date="(date) => date.getTime() > Date.now()"
+              disabled
+            />
+          </el-form-item>
+          <el-form-item :label="$t('info.displayTimeRange')">
+            <el-date-picker
+              v-model="displayTimeRange"
+              type="daterange"
+              :range-separator="$t('search.timeRangeSep')"
+              :start-placeholder="$t('search.startTime')"
+              :end-placeholder="$t('search.endTime')"
+              value-format="YYYYMMDD"
+              format="YY/MM/DD"
+              :disabled-date="(date) => date.getTime() > Date.now()"
+              :clearable="false"
+            />
+          </el-form-item>
+          <div
+            v-if="homeStatistics !== null"
+            class="number-info-contatiner"
+            style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding-top: 10px;">
 
-          <el-statistic :title="$t('info.totalCount')" :value="homeStatistics['totalCount']" />
-          <el-statistic :title="$t('info.timeRangeCount')" :value="homeStatistics['timeRangeCount']" />
-          <el-statistic :title="$t('info.yesterdayCount')" :value="homeStatistics['yesterdayCount']" />
+            <el-statistic :title="$t('info.totalCount')" :value="homeStatistics['totalCount']" />
+            <el-statistic :title="$t('info.timeRangeCount')" :value="homeStatistics['timeRangeCount']" />
+            <el-statistic :title="$t('info.yesterdayCount')" :value="homeStatistics['yesterdayCount']" />
+          </div>
+        </el-form>
+      </div>
+    </div>
+    <div class="card-container" v-if="homeStatistics !== null">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ $t('chartsName.ActorCountryCode') }}
+            <el-tag>TOP 8</el-tag>
+          </h3>
         </div>
-      </el-form>
-    </div>
-  </div>
+        <div class="card-separator"></div>
+        <div class="card-body">
+          <VPieCharts :vdata="homeStatistics['ActorCountryCode']" />
+        </div>
+      </div>
 
-  <div class="card-container" v-if="homeStatistics !== null">
-    <div class="card">
-      <div class="card-header">
-        <h3>{{ $t('chartsName.ActorCountryCode') }}
-          <el-tag>TOP 8</el-tag>
-        </h3>
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ $t('chartsName.shortMentionSourceName') }}
+            <el-tag>TOP 8</el-tag>
+          </h3>
+        </div>
+        <div class="card-separator"></div>
+        <div class="card-body">
+          <VPieCharts :vdata="shortMentionSourceName" />
+        </div>
       </div>
-      <div class="card-separator"></div>
-      <div class="card-body">
-        <VPieCharts :vdata="homeStatistics['ActorCountryCode']" />
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h3>{{ $t('chartsName.shortMentionSourceName') }}
-          <el-tag>TOP 8</el-tag>
-        </h3>
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ $t('chartsName.EventRootCode') }}
+            <el-tag>TOP 8</el-tag>
+          </h3>
+        </div>
+        <div class="card-separator"></div>
+        <div class="card-body">
+          <VPieCharts :vdata="homeStatistics['EventRootCode']" />
+        </div>
       </div>
-      <div class="card-separator"></div>
-      <div class="card-body">
-        <VPieCharts :vdata="shortMentionSourceName" />
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h3>{{ $t('chartsName.EventRootCode') }}
-          <el-tag>TOP 8</el-tag>
-        </h3>
+      <div class="card">
+        <div class="card-header"><h3>{{ $t('chartsName.MentionDocTone') }}</h3></div>
+        <div class="card-separator"></div>
+        <div class="card-body">
+          <VPieCharts :vdata="homeStatistics['MentionDocTone']" />
+        </div>
       </div>
-      <div class="card-separator"></div>
-      <div class="card-body">
-        <VPieCharts :vdata="homeStatistics['EventRootCode']" />
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header"><h3>{{ $t('chartsName.MentionDocTone') }}</h3></div>
-      <div class="card-separator"></div>
-      <div class="card-body">
-        <VPieCharts :vdata="homeStatistics['MentionDocTone']" />
+      <div class="card">
+        <div class="card-header"><h3>{{ $t('chartsName.NewsProportion') }}</h3></div>
+        <div class="card-separator"></div>
+        <div class="card-body">
+          <VPieCharts :vdata="homeStatistics['NewsProportion']" />
+        </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header"><h3>{{ $t('chartsName.NewsProportion') }}</h3></div>
-      <div class="card-separator"></div>
-      <div class="card-body">
-        <VPieCharts :vdata="homeStatistics['NewsProportion']" />
+      <div class="card">
+        <div class="card-header"><h3>{{ $t('chartsName.KeywordCloud') }}</h3></div>
+        <div class="card-separator"></div>
+        <div class="card-body">
+          <VWordCloud :vdata="homeStatistics['KeywordCloud']" />
+        </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header"><h3>{{ $t('chartsName.KeywordCloud') }}</h3></div>
-      <div class="card-separator"></div>
-      <div class="card-body">
-        <VWordCloud :vdata="homeStatistics['KeywordCloud']" />
-      </div>
     </div>
-
   </div>
 </template>
 
@@ -117,7 +117,7 @@ import VPieCharts from '@/components/VPieCharts.vue'
 import VWordCloud from '@/components/VWordCloud.vue'
 import { queryHomeStatistics } from '@/utils/axiosUtil.js'
 import { deepCopy } from '@/utils/funcsUtil.js'
-import { onMounted, computed, ref, watch } from 'vue'
+import { onMounted, computed, ref, watch, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import ArticlesCountDisplay from '@/components/ArticlesCountDisplay.vue'
 
@@ -149,6 +149,7 @@ const shortMentionSourceName = computed(() => {
   })
 })
 
+onBeforeMount(() => document.title = "Home")
 onMounted(async () => await getHomeStatistics())
 
 // 请求后端首页统计信息
@@ -172,10 +173,13 @@ watch(displayTimeRange, async () => {
 </script>
 
 <style lang="scss" scoped>
-$intro-container-height: 280px;
-$intro-width-percent: 80%;
-$info-width-percent: calc(100% - $intro-width-percent);
+@import "public/styles/variables.scss";
 
+.home-page-container {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+}
 
 .intro-container {
   background-color: white;

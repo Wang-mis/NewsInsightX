@@ -1,5 +1,5 @@
 <template>
-  <div class="search-container">
+  <div class="search-page-container">
     <div class="search-form-container-main">
       <el-form :inline="true" :model="searchData" style="height: 70px; padding: 15px 0">
         <el-form-item
@@ -57,9 +57,38 @@
         </el-form-item>
       </el-form>
 
-      <div style="color: #a8abc3" v-show="searchData.total > 0">
+      <div style="flex-grow: 1"></div>
+
+      <div style="color: #a8abc3; margin-right: 20px;" v-show="searchData.total > 0">
         {{ $t('search.totalPre') + searchData.total + $t('search.totalPost') }}
       </div>
+
+      <el-button type="primary" @click="addToListDialogVisible = true">{{ $t('search.addToList') }}</el-button>
+
+      <el-dialog
+        width="30%"
+        v-model="addToListDialogVisible"
+        @close="addToListDialogVisible = false"
+      >
+        <template #header="{ close, titleId, titleClass }">
+          <div class="my-header">
+            <h4 :id="titleId" :class="titleClass">确认将新闻加入清单</h4>
+          </div>
+        </template>
+        <span>确定要将当前查询到的所有新闻加入清单吗？本次查询共有{{ searchData.total }}条新闻数据。</span>
+        <br />
+        <span
+          v-show="searchData.total > maxToListCount">
+          当新闻数量较多时，会花费较长时间。因此只会添加前{{ maxToListCount }}条新闻。
+        </span>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="addToListDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="addToList">确定</el-button>
+          </div>
+        </template>
+
+      </el-dialog>
     </div>
 
     <Transition name="height">
@@ -154,11 +183,11 @@
 
     <div
       class="news-cards-container"
-      :style="'height: calc(100vh - ' + (showSearchDetails ? '2' : '1') + ' * 70px - 40px);'"
+      :style="'height: calc(100vh - ' + (showSearchDetails ? '2' : '1') + ' * 70px - 40px); align-items: flex-start;'"
       v-show="updating || newsList.length > 0"
       @wheel="updateNewsListScroll"
     >
-      <div v-for="(item, index) in newsList" :key="index">
+      <div v-for="(item, index) in newsList" :key="index" class="news-card">
         <VNewCard :data="item" :keywords="searchData.keywords" />
       </div>
       <div class="loading-icon" v-show="updating">
@@ -172,13 +201,15 @@
 <script lang="ts" setup>
 import VNewCard from '../components/VNewCard.vue'
 import { queryNews } from '@/utils/axiosUtil.js'
-import { reactive, ref, onMounted, watch, computed } from 'vue'
+import { reactive, ref, onMounted, watch, computed, onBeforeMount } from 'vue'
 import tippy, { animateFill } from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/dist/backdrop.css'
 import 'tippy.js/animations/shift-away.css'
 import 'tippy.js/themes/light.css'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
+import { ElNotification } from 'element-plus'
 
 // region 获取今天的日期和30天前的日期
 
@@ -198,11 +229,27 @@ const thirtyDaysAgoStr = formatDate(thirtyDaysAgo)
 // endregion 获取今天的日期和30天前的日期
 
 const { t, locale } = useI18n()
+// 记录上一次查询的Search Data，添加清单时根据该数据查询
+let lastSearchData = {
+  keywords: [],
+  caseSensitive: false,
+  queryByContent: false,
+  wordMatch: false,
+  onlyId: false,
+  date: [thirtyDaysAgoStr, todayStr],
+  sources: [],
+  country: '',
+  wordCount: '',
+  page: 1,
+  limit: 30,
+  total: 0
+}
 const searchData = reactive({
   keywords: [],
   caseSensitive: false,
   queryByContent: false,
   wordMatch: false,
+  onlyId: false,
   date: [thirtyDaysAgoStr, todayStr],
   sources: [],
   country: '',
@@ -211,6 +258,7 @@ const searchData = reactive({
   limit: 30,
   total: 0
 })
+const store = useStore()
 const wordCountRanges = [
   { value: [0, 1000], label: '≤1000' },
   { value: [1001, 3000], label: '>1000 && ≤3000' },
@@ -278,6 +326,7 @@ watch(locale, () => {
 
 const sourceOptions = [
   { value: 'yorkpress', label: 'yorkpress' },
+  { value: 'nytimes', label: 'nytimes' },
   { value: 'dw', label: 'dw' },
   { value: 'yahoo', label: 'yahoo' },
   { value: 'washingtonpost', label: 'washingtonpost' },
@@ -498,21 +547,24 @@ const countryOptions = computed(() => [
   { value: 'ZWE', label: t('countrys.Zimbabwe') }
 ])
 
-// region 请求数据
+// region 查询新闻
 const newsList = ref([])
 const updating = ref(false)
 // 跳转到该网页时，请求第一页数据
-onMounted(async () => await getNews())
+onBeforeMount(() => document.title = "Search")
+onMounted(async () => await getNews(searchData, false))
 // 请求后端新闻文章
-const getNews = async () => {
+const getNews = async (data) => {
   if (updating.value) return // 不重复请求数据
   updating.value = true
-  const config_data = { ...searchData }
+  const configData = { ...data }
+  lastSearchData = { ...data }
   console.log(new Date(), '开始请求数据')
-  await queryNews(config_data).then(res => {
+  await queryNews(configData).then(res => {
     if (res.code === 0) {
+      // 将数据加入列表，用于显示
       newsList.value.push(...res.data['newsList'])
-      searchData.total = res.data['totalRecords']
+      data.total = res.data['totalRecords']
     }
   })
   updating.value = false
@@ -528,17 +580,66 @@ const updateNewsListScroll = async (event) => {
   const clientHeight = element.clientHeight
   if (clientHeight + scrollTop >= scrollHeight - 500) {
     searchData.page++
-    await getNews()
+    await getNews(searchData, false)
   }
 }
 // 点击查询按钮
 const onSubmit = async () => {
   searchData.total = 0
   newsList.value.length = 0 // 清空新闻列表
-  searchData.page = 1 // 注意：在查询时，要将页码显示到第一页
-  await getNews()
+  searchData.page = 1 // 将页码修改为第一页
+  await getNews(searchData, false)
 }
 // endregion 请求数据
+
+// region 将查询到的所有新闻加入清单
+const maxToListCount = ref(500)
+const addToListDialogVisible = ref(false)
+const addToList = async () => {
+  addToListDialogVisible.value = false
+  if (updating.value) {
+    ElNotification({
+      title: '请求数据失败！',
+      message: '当前正在请求其他数据，请等待。',
+      type: 'error',
+      duration: 1500
+    })
+    return
+  }
+  // 弹出提示框
+  const waitingNotification = ElNotification({
+    title: '请求数据中',
+    message: '正在获取当前查询的所有新闻数据',
+    type: 'info',
+    duration: 0
+  })
+  // 修改Search Data，以获取所有新闻数据
+  lastSearchData.page = 1
+  lastSearchData.limit = Math.min(searchData.total, maxToListCount.value)
+  lastSearchData.onlyId = true
+  // 请求
+  updating.value = true
+  const configData = { ...lastSearchData }
+  console.log(new Date(), '开始请求数据')
+  await queryNews(configData).then(res => {
+    if (res.code === 0) {
+      store.commit('appendAnalysisNewsIds', res.data['ids'])
+      lastSearchData.total = res.data['totalRecords']
+      // 完成请求，弹出提示框
+      waitingNotification.close()
+      ElNotification({
+        title: '添加至清单成功',
+        message: '成功添加' + Math.min(lastSearchData.total, maxToListCount.value) + '条新闻',
+        type: 'success',
+        duration: 1500
+      })
+    }
+  })
+  // 结束请求
+  updating.value = false
+  waitingNotification.close()
+}
+// endregion
 
 // region 显示文本框关键词
 // 文本框按下回车后添加关键词
@@ -587,11 +688,14 @@ watch(locale, () => {
 </script>
 
 <style scoped lang="scss">
+@import "public/styles/variables";
 
-.search-container {
-  padding: 0 5px;
+.search-page-container {
+  font-family: "Inter", sans-serif;
+
+  padding: 0 25px;
   width: 100%;
-  height: calc(100vh - 40px);
+  height: calc(100vh - $navbar-height);
 
   .search-form-container-main {
     width: 100%;
@@ -611,18 +715,24 @@ watch(locale, () => {
 
   .news-cards-container {
     width: 100%;
-    overflow: auto;
+    overflow-y: auto;
     padding-right: 15px;
 
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 12px;
+    .news-card {
+      width: 20%;
+      display: inline-block;
+      padding: 5px;
+      margin: 0;
+      box-sizing: border-box;
+    }
 
     .loading-icon {
-      grid-column: span 5;
+      width: 100%;
       text-align: center;
+      margin: 0;
       padding: 20px 0;
       color: #a8abc3;
+      box-sizing: border-box;
     }
   }
 

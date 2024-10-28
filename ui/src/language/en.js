@@ -42,7 +42,8 @@ export default {
     wordCountTip: 'Please Select.',
     query: 'Query',
     totalPre: 'total ',
-    totalPost: ' news'
+    totalPost: ' news',
+    addToList: 'Add To List'
   },
   countrys: {
     China: 'China',
