@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { queryLogin, querySignup } from '@/utils/axiosUtil.js'
+import { queryLogin } from '@/utils/axiosUtil.js'
 import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import Cookies from 'js-cookie'
 import { useStore } from 'vuex'
 import { deepCopy } from '@/utils/funcsUtil'
-
-let isSignup = ref(false)
 
 const userData = reactive({
   username: '',
@@ -63,76 +61,11 @@ const onClickLogin = () => {
   })
 }
 
-const onClickSign = () => {
-  // 第一次点击注册按钮，切换至注册界面
-  if (!isSignup.value) {
-    isSignup.value = true
-    return
-  }
-
-  // 第二次点击注册按钮，提交数据
-  formRef.value.validate(async (valid) => {
-    if (!valid) return
-    const config_data = {
-      username: userData.username,
-      password: userData.password
-    }
-
-    await querySignup(config_data).then((res) => {
-      if (res.code === 0) {
-        // 注册成功，跳转到homepage
-        Cookies.set('token', res.data.token, { expires: 7 })
-        delete res.data.token
-        store.commit('updateUserInfo', deepCopy(res.data))
-        router.replace('/')
-      } else if (res.code === 1) {
-        // 用户名已存在
-        ElNotification({
-          title: '注册失败',
-          message: '用户名已存在！',
-          type: 'error',
-          duration: 1500
-        })
-      } else {
-        // 其他错误
-        ElNotification({
-          title: '注册失败',
-          message: '未知错误！',
-          type: 'error',
-          duration: 1500
-        })
-      }
-    })
-
-
-  })
-}
-
-
 const validatePassword = (rule, value, callback) => {
   const regex = /^[a-zA-Z0-9_!@#$%^&*()-=+[\]{};':"\\|,.<>?]+$/
   if (!regex.test(value)) callback(new Error('密码只能由字母、数字、常用字符组成'))
   else callback()
 }
-
-const validatePasswordAgain = (rule, value, callback) => {
-  if (value !== userData.password) callback(new Error('两次输入的密码不一致'))
-  else callback()
-}
-
-const signupRules = reactive({
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { validator: validatePassword, trigger: 'blur' }
-  ],
-  passwordAgain: [
-    { required: true, message: '请再次输入密码', trigger: 'blur' },
-    { validator: validatePasswordAgain, trigger: 'blur' }
-  ]
-})
 
 const loginRules = reactive({
   username: [
@@ -144,73 +77,127 @@ const loginRules = reactive({
   ]
 })
 
-
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login">
-      <div class="title" v-if="isSignup">用户注册</div>
-      <div class="title" v-else>用户登录</div>
-
-      <el-form
-        :model="userData"
-        :rules="isSignup ? signupRules : loginRules"
-        ref="formRef"
-        label-width="auto"
-        style="max-width: 600px;">
-        <el-form-item label="用户名" style="margin-bottom: 16px;" prop="username">
-          <el-input v-model="userData.username" placeholder="请输入用户名" />
-        </el-form-item>
-        <el-form-item label="密码" style="margin-bottom: 16px;" prop="password">
-          <el-input type="password" v-model="userData.password" placeholder="请输入密码" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="确认密码" v-show="isSignup" style="margin-bottom: 16px;" prop="passwordAgain">
-          <el-input type="password" v-model="userData.passwordAgain" placeholder="请再次输入密码" autocomplete="off" />
-        </el-form-item>
-
-        <el-form-item style="margin-top: 25px;">
-          <div style="width: 100%; display: flex; justify-content: center">
-            <el-button type="primary" @click="onClickLogin" v-show="!isSignup">登录</el-button>
-            <el-button :type="isSignup ? 'primary' : ''" @click="onClickSign">注册</el-button>
-            <el-button @click="isSignup = false" v-show="isSignup">返回登录</el-button>
+  <div class="login-page-container">
+    <div class="top-content-container">
+      <div class="login-container">
+        <div class="login">
+          <div class="title">
+            <div class="logo"></div>
+            <div class="welcome">Welcome</div>
+            <div class="greet">It's great to see you.</div>
           </div>
-        </el-form-item>
-      </el-form>
+          <div class="form-container">
+            <el-form
+              label-position="top"
+              :model="userData"
+              :rules="loginRules"
+              hide-required-asterisk
+              :show-message="false"
+              ref="formRef"
+              label-width="auto"
+              style="max-width: 600px;">
+              <el-form-item style="margin-bottom: 10px;" prop="username">
+                <template #label>
+                  Username
+                </template>
+                <el-input v-model="userData.username" placeholder="Username" size="large" />
+              </el-form-item>
+              <el-form-item style="margin-bottom: 10px;" prop="password">
+                <template #label>
+                  <div class="password-label-container"
+                       style="display: flex; flex-direction: row; justify-content: space-between;">
+                    <span>Password</span>
+                    <a>Forgot password?</a>
+                  </div>
+                </template>
+                <el-input type="password" v-model="userData.password" placeholder="Password" autocomplete="off"
+                          size="large" />
+              </el-form-item>
+
+              <el-form-item style="margin-top: 25px;">
+                <el-button type="primary" style="width: 100%; background-color: #5954f5;" size="large"
+                           @click="onClickLogin">
+                  Let's go
+                </el-button>
+              </el-form-item>
+            </el-form>
+            <div class="to-sign" style="width: 100%; display: flex; justify-content: center;">
+              <span>Don't have an account? <a href="#">Get started.</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar-container">
+
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.login-container {
+$left-bar-width: 20%;
+$bottom-bar-height: 7%;
+
+.login-page-container {
   width: 100%;
-  height: 800px;
-  position: relative;
+  height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: url("public/bg_login.webp");
 
-  .login {
-    // 调整位置到父元素正中间
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
+  .top-content-container {
+    width: 100%;
+    height: calc(100% - $bottom-bar-height);
+    position: relative;
+  }
 
-    // 设置边框
-    border: solid;
-    border-radius: 5px;
-    padding: 0 20px;
+  .bottom-bar-container {
+    width: 100%;
+    height: $bottom-bar-height;
+    background-color: #2f2f2f;
+  }
 
-    background-color: whitesmoke;
+  .login-container {
+    height: 100%;
+    width: calc(100% - $left-bar-width);
+    float: right;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-    // 设置标题
-    .title {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 15px 0;
-      font-size: 25px;
-      color: #2c3e50;
+    .login {
+      width: 320px;
+
+      .title {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 30px;
+
+        .welcome {
+          color: #2c3e50;
+          font-size: 25px;
+          font-weight: bold;
+        }
+
+        .greet {
+          color: #2c3e50;
+          font-size: 15px;
+          font-weight: normal;
+        }
+      }
     }
   }
+
+
 }
 </style>
