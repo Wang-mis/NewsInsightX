@@ -1,4 +1,29 @@
 export default {
+  login: {
+    welcome: '欢迎',
+    greet: '很高兴见到你！',
+    username: '用户名',
+    password: '密码',
+    noAccountTip1: '没有账户？',
+    noAccountTip2: '创建',
+    forgotPassword: '忘记密码？',
+    submit: '登录'
+  },
+  navbar: {
+    analysis: {
+      showList: '查看清单',
+      listCountPrefix: '共',
+      listCountSuffix: '条新闻',
+      clearList: '清空清单',
+      sendList: '发送数据',
+      notifications: {
+        clear: {
+          title: '新闻清单已清空',
+          message: ''
+        }
+      }
+    }
+  },
   chartsName: {
     dailyArticlesCount: '每日新闻数量',
     ActorCountryCode: '各个国家的新闻统计',
@@ -16,6 +41,8 @@ export default {
     yesterdayCount: '昨日新闻数'
   },
   search: {
+    loading: '加载中...',
+    empty: '暂无数据',
     detailSearch: '高级搜索',
     keyword: '关键词：',
     caseSensitive: '区分大小写',
@@ -43,7 +70,36 @@ export default {
     query: '查询',
     totalPre: '共',
     totalPost: '条新闻',
-    addToList: '加入清单'
+    addToList: '加入清单',
+    queryInList: '只查询清单内容',
+    addToListTips: {
+      confirmTitle: '确认将新闻加入清单',
+      confirmContent1: '确定要将当前查询到的所有新闻加入清单吗？本次查询共有',
+      confirmContent2: '条新闻数据。',
+      confirmContent3: '当新闻数量较多时，会花费较长时间。因此只会添加前',
+      confirmContent4: '条新闻。',
+      confirmBtn: '确定',
+      quitBtn: '取消'
+    },
+    notifications: {
+      error: {
+        title: '请求数据失败！',
+        message: '当前正在请求其他数据，请等待。'
+      },
+      wait: {
+        title: '请求数据中',
+        message: '正在获取当前查询的所有新闻数据'
+      },
+      success: {
+        title: '添加至清单成功',
+        message1: '成功添加',
+        message2: '条新闻'
+      }
+    }
+  },
+  card: {
+    addToList: '添加至清单',
+    removeFromList: '从清单中删除',
   },
   countrys: {
     Afghanistan: '阿富汗',
@@ -239,6 +295,5 @@ export default {
     Yemen: '也门',
     Zambia: '赞比亚',
     Zimbabwe: '津巴布韦'
-  },
-  loading: '加载中...'
+  }
 }

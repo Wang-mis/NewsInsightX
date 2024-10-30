@@ -15,7 +15,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/search',
+      path: '/search/:queryInList?',
       name: 'search',
       component: () => import('../views/SearchView.vue')
     },
@@ -27,11 +27,6 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue')
-    },
-    {
-      path: '/login2',
-      name: 'login2',
       component: () => import('../views/LoginView.vue')
     },
     {

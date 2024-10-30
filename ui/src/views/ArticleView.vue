@@ -22,7 +22,7 @@ async function getArticleData() {
   const id = route.params.id
   const configData = { id }
   console.log('请求文章数据中。')
-  await queryNewsById(configData).then(res => {
+  await queryNewsById(configData).then((res) => {
     if (res.code !== 0) {
       console.log('请求文章数据失败！')
       return
@@ -43,7 +43,7 @@ async function getArticleData() {
 
 const processArticleContent = (content: string) => {
   let lines = content.split('\n')
-  return lines.map(line => line.trim())
+  return lines.map((line) => line.trim())
 }
 
 const formatUrl = (url, frontLen, rearLen) => {
@@ -52,14 +52,16 @@ const formatUrl = (url, frontLen, rearLen) => {
   return url
 }
 
-const processDate = (date: string) => date.slice(0, 4) + '-' + date.slice(4, 6) + '-' + date.slice(6, 8)
+const processDate = (date: string) =>
+  date.slice(0, 4) + '-' + date.slice(4, 6) + '-' + date.slice(6, 8)
 
 const processAuthor = (author: string) => {
   author = author.trim().replace(/^by/i, '').trim()
-  return author.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+  return author
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
 }
-
-
 </script>
 
 <template>
@@ -71,7 +73,9 @@ const processAuthor = (author: string) => {
         <span class="author" v-if="data.author !== '_'">By {{ data.author }}</span>
         <span style="flex-grow: 1"></span>
         <span class="date">{{ data.dtime }}</span>
-        <span class="identifier"><a :href="data.mentionIdentifier" target="_blank">goto original page</a></span>
+        <span class="identifier"
+          ><a :href="data.mentionIdentifier" target="_blank">goto original page</a></span
+        >
       </div>
       <div class="content">
         <p class="paragraph" v-for="p in data.paragraphs">
@@ -84,11 +88,11 @@ const processAuthor = (author: string) => {
 </template>
 
 <style scoped lang="scss">
-@import "public/styles/variables";
+@import 'public/styles/variables';
 
 .article-page-container {
   width: 100%;
-  height: calc(100vh - $navbar-height);
+  //height: calc(100vh - $navbar-height);
 
   display: flex;
   flex-direction: row;
@@ -103,7 +107,6 @@ const processAuthor = (author: string) => {
       font-size: 30px;
       font-weight: bold;
       text-align: justify;
-
     }
 
     .info {
@@ -121,7 +124,7 @@ const processAuthor = (author: string) => {
     }
 
     .paragraph {
-      font-family: "Inter", sans-serif;
+      font-family: 'Inter', sans-serif;
       white-space: pre-line;
       font-size: 17px;
       line-height: 1.6;

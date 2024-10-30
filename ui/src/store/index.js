@@ -7,7 +7,7 @@ const analysisNewsIds = localStorage.getItem('analysisNewsIds') ?
 const store = createStore({
   state() {
     return {
-      analysisNewsIds,
+      analysisNewsIds: new Set(analysisNewsIds),
       homeStatistics: null,
       userinfo: null
     }
@@ -15,17 +15,18 @@ const store = createStore({
   mutations: {
     // 添加新闻到清单
     appendAnalysisNewsIds: (state, ids) => {
-      // 去除重复元素
-      ids.forEach(newsId => {
-        if (state.analysisNewsIds.some(id => id === newsId)) return
-        state.analysisNewsIds.push(newsId)
-      })
+      ids.forEach(newsId => state.analysisNewsIds.add(newsId))
       // 将清单添加到本地存储
-      localStorage.setItem('analysisNewsIds', JSON.stringify(state.analysisNewsIds))
+      localStorage.setItem('analysisNewsIds', JSON.stringify([...state.analysisNewsIds]))
+    },
+    // 删除清单中的某个元素
+    deleteAnalysisNews: (state, id) => {
+      state.analysisNewsIds.delete(id)
+      localStorage.setItem('analysisNewsIds', JSON.stringify([...state.analysisNewsIds]))
     },
     // 清空清单
     removeAnalysisNewsIds: (state) => {
-      state.analysisNewsIds = []
+      state.analysisNewsIds = new Set()
       localStorage.removeItem('analysisNewsIds')
     },
 

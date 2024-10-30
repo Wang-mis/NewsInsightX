@@ -6,16 +6,19 @@ import { useStore } from 'vuex'
 import { ElNotification } from 'element-plus'
 import axios from 'axios'
 import { request, updateBiaseerData } from '@/utils/axiosUtil'
+import SvgIcon from '@/components/SvgIcon.vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const i18n = useI18n()
 const store = useStore()
+const router = useRouter()
 const changeLang = (lang) => i18n.locale.value = lang
-const newsCount: Number = computed(() => store.state.analysisNewsIds.length)
+const newsCount: Number = computed(() => store.state.analysisNewsIds.size)
 const removeList = () => {
   store.commit('removeAnalysisNewsIds')
   ElNotification({
-    title: '新闻清单已清空',
-    message: '',
+    title: i18n.t('navbar.analysis.notifications.clear.title'),
+    message: i18n.t('navbar.analysis.notifications.clear.message'),
     type: 'warning',
     duration: 1500
   })
@@ -24,7 +27,7 @@ const removeList = () => {
 const sendList = async () => {
   const newsIds = []
   // 将数据传输给Biaseer的后端服务器
-  const data = { 'ids': store.state.analysisNewsIds }
+  const data = { 'ids': [...store.state.analysisNewsIds] }
   // Biaseer部署在本地，需要Chrome浏览器开启跨域--disable-web-security
   const uri = 'http://10.108.17.47:14449/update_data'
   axios.post(uri, data).then(response => console.log(response)).catch(error => console.log(error))
@@ -34,14 +37,22 @@ const sendList = async () => {
   // })
 }
 
+const toShowList = () => {
+  const currentPath = window.location.pathname
+  const targetPath = '/search/true'
+  if (currentPath === targetPath) window.location.reload()
+  else router.push({ name: 'search', params: { queryInList: true } })
+}
 </script>
 
 <template>
   <header class="nav-bar">
     <el-menu
+      class="nav-bar-menu"
       mode="horizontal"
       :ellipsis="false"
       :router="true"
+      default-active="/"
     >
       <el-menu-item index="/">
         <el-icon style="margin-right: 0;">
@@ -51,7 +62,7 @@ const sendList = async () => {
 
       <div style="flex-grow: 1"></div>
 
-      <el-menu-item index="/search">
+      <el-menu-item index="/search/false">
         <el-icon style="margin-right: 0;">
           <Search />
         </el-icon>
@@ -64,29 +75,47 @@ const sendList = async () => {
         </el-icon>
       </el-menu-item>
 
-      <el-sub-menu index="/analysis" style="margin: 0; padding: 0;">
-        <template #title>
-          <el-icon style="margin: 0; padding: 0;">
-            <DataAnalysis />
-          </el-icon>
+      <!-- 清单信息 -->
+      <el-dropdown style="padding: 0 8px;">
+            <span class="el-dropdown-link" style="color: black">
+              <el-icon style="margin: 0; padding: 0;" :size="18"><DataAnalysis /></el-icon>
+            </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              style="display: flex; justify-content: space-between"
+              @click="toShowList">
+              <span style="margin-right: 15px;">{{ $t('navbar.analysis.showList') }}</span>
+              <span
+                style="font-size: 12px; color: #909399">{{ $t('navbar.analysis.listCountPrefix') + String(newsCount) + $t('navbar.analysis.listCountSuffix')
+                }}</span>
+            </el-dropdown-item>
+            <el-dropdown-item style="display: flex; justify-content: start" @click="removeList">
+              {{ $t('navbar.analysis.clearList') }}
+            </el-dropdown-item>
+            <el-dropdown-item style="display: flex; justify-content: start" @click="sendList">
+              {{ $t('navbar.analysis.sendList') }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
         </template>
+      </el-dropdown>
 
-        <el-menu-item>清单内共{{ newsCount }}条新闻</el-menu-item>
-        <el-menu-item @click="removeList">清空新闻清单</el-menu-item>
-        <el-menu-item @click="sendList">发送数据</el-menu-item>
-      </el-sub-menu>
-
-      <!-- todo 语言选择框 -->
-      <el-sub-menu style="margin: 0; padding: 0;">
-        <template #title>
-          <el-icon style="margin: 0; padding: 0;">
-            <ChatLineSquare />
-          </el-icon>
+      <!-- 语言选择框 -->
+      <el-dropdown style="padding: 0 8px;">
+            <span class="el-dropdown-link">
+              <svg-icon icon="translate" width="20px" height="20px" />
+            </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item style="display: flex; justify-content: center" @click="changeLang('zh')">
+              中文
+            </el-dropdown-item>
+            <el-dropdown-item style="display: flex; justify-content: center" @click="changeLang('en')">
+              English
+            </el-dropdown-item>
+          </el-dropdown-menu>
         </template>
-
-        <el-menu-item @click="changeLang('zh')">简体中文</el-menu-item>
-        <el-menu-item @click="changeLang('en')">English</el-menu-item>
-      </el-sub-menu>
+      </el-dropdown>
     </el-menu>
   </header>
 </template>
@@ -116,6 +145,21 @@ const sendList = async () => {
 
   el-icon {
     font-size: 2em;
+  }
+
+  .el-dropdown-link {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .el-dropdown-link:hover {
+    border: none;
+    background-color: transparent;
   }
 }
 </style>

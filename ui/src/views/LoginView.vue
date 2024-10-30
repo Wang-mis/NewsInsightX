@@ -6,6 +6,8 @@ import { ElNotification } from 'element-plus'
 import Cookies from 'js-cookie'
 import { useStore } from 'vuex'
 import { deepCopy } from '@/utils/funcsUtil'
+import SvgIcon from '@/components/SvgIcon.vue'
+import { useI18n } from 'vue-i18n'
 
 const userData = reactive({
   username: '',
@@ -14,6 +16,7 @@ const userData = reactive({
 })
 const router = useRouter()
 const store = useStore()
+const i18n = useI18n()
 const formRef = ref(null)
 
 const onClickLogin = () => {
@@ -79,58 +82,87 @@ const loginRules = reactive({
 
 onBeforeMount(() => {
   store.commit('clearUserInfo')
-  document.title = "Login"
+  document.title = 'Login'
 })
+
+const changeLang = (lang) => i18n.locale.value = lang
 
 </script>
 
 <template>
   <div class="login-page-container">
     <div class="top-content-container">
-      <div class="login-container">
-        <div class="login">
-          <div class="title">
-            <div class="logo"></div>
-            <div class="welcome">Welcome</div>
-            <div class="greet">It's great to see you.</div>
-          </div>
-          <div class="form-container">
-            <el-form
-              label-position="top"
-              :model="userData"
-              :rules="loginRules"
-              hide-required-asterisk
-              :show-message="false"
-              ref="formRef"
-              label-width="auto"
-              style="max-width: 600px;">
-              <el-form-item style="margin-bottom: 10px;" prop="username">
-                <template #label>
-                  Username
-                </template>
-                <el-input v-model="userData.username" placeholder="Username" size="large" />
-              </el-form-item>
-              <el-form-item style="margin-bottom: 10px;" prop="password">
-                <template #label>
-                  <div class="password-label-container"
-                       style="display: flex; flex-direction: row; justify-content: space-between;">
-                    <span>Password</span>
-                    <a>Forgot password?</a>
-                  </div>
-                </template>
-                <el-input type="password" v-model="userData.password" placeholder="Password" autocomplete="off"
-                          size="large" />
-              </el-form-item>
+      <div class="top-right-container">
+        <div class="options-container">
+          <div class="lang-change">
+            <el-dropdown>
+            <span class="el-dropdown-link">
+              <svg-icon icon="translate" width="22px" height="22px" />
+            </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item style="display: flex; justify-content: center" @click="changeLang('zh')">
+                    中文
+                  </el-dropdown-item>
+                  <el-dropdown-item style="display: flex; justify-content: center" @click="changeLang('en')">
+                    English
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
 
-              <el-form-item style="margin-top: 25px;">
-                <el-button type="primary" style="width: 100%; background-color: #5954f5;" size="large"
-                           @click="onClickLogin">
-                  Let's go
-                </el-button>
-              </el-form-item>
-            </el-form>
-            <div class="to-sign" style="width: 100%; display: flex; justify-content: center; color: #2c3e50">
-              <span>Don't have an account? <a href="#">Get started.</a></span>
+            </el-dropdown>
+          </div>
+        </div>
+        <div class="login-container">
+          <div class="login">
+            <div class="title">
+              <div class="logo"></div>
+              <div class="welcome">{{ $t('login.welcome') }}</div>
+              <div class="greet">{{ $t('login.greet') }}</div>
+            </div>
+            <div class="form-container">
+              <el-form
+                label-position="top"
+                :model="userData"
+                :rules="loginRules"
+                hide-required-asterisk
+                :show-message="false"
+                ref="formRef"
+                label-width="auto"
+                style="max-width: 600px;">
+                <el-form-item style="margin-bottom: 10px;" prop="username">
+                  <template #label>
+                    {{ $t('login.username') }}
+                  </template>
+                  <el-input v-model="userData.username" :placeholder="i18n.t('login.username')" size="large" />
+                </el-form-item>
+                <el-form-item style="margin-bottom: 10px;" prop="password">
+                  <template #label>
+                    <div class="password-label-container"
+                         style="display: flex; flex-direction: row; justify-content: space-between;">
+                      <span>{{ $t('login.password') }}</span>
+                      <a>{{ $t('login.forgotPassword') }}</a>
+                    </div>
+                  </template>
+                  <el-input type="password" v-model="userData.password" :placeholder="i18n.t('login.password')"
+                            autocomplete="off"
+                            size="large" />
+                </el-form-item>
+
+                <el-form-item style="margin-top: 25px;">
+                  <el-button type="primary" style="width: 100%; background-color: #5954f5;" size="large"
+                             @click="onClickLogin">
+                    {{ $t('login.submit') }}
+                  </el-button>
+                </el-form-item>
+              </el-form>
+              <div
+                class="to-sign"
+                style="width: 100%; display: flex; justify-content: center; color: #2c3e50">
+                <span>
+                  {{ $t('login.noAccountTip1') }}<a href="#">{{ $t('login.noAccountTip2') }}</a>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -148,7 +180,6 @@ onBeforeMount(() => {
 
 <style scoped lang="scss">
 @import "public/styles/variables.scss";
-
 
 .login-page-container {
   font-family: "Inter", sans-serif;
@@ -188,7 +219,7 @@ onBeforeMount(() => {
     }
   }
 
-  .login-container {
+  .top-right-container {
     height: 100%;
     width: calc(100% - $left-bar-width);
     float: right;
@@ -198,28 +229,62 @@ onBeforeMount(() => {
     align-items: center;
     justify-content: center;
 
-    .login {
-      width: 320px;
+    .options-container {
+      width: 100%;
+      background-color: white;
+      display: flex;
+      flex-direction: row-reverse;
 
-      .title {
-        width: 100%;
+      .lang-change {
+        margin: 15px 50px 15px 0;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding-bottom: 30px;
+        .el-dropdown-link {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
 
-        .welcome {
-          color: #2c3e50;
-          font-size: 25px;
-          font-weight: bold;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
         }
 
-        .greet {
-          color: #2c3e50;
-          font-size: 15px;
-          font-weight: normal;
+        .el-dropdown-link:hover {
+          border: none;
+          background-color: transparent;
+        }
+      }
+    }
+
+    .login-container {
+      width: 100%;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .login {
+        width: 320px;
+
+        .title {
+          width: 100%;
+
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 30px;
+
+          .welcome {
+            color: #2c3e50;
+            font-size: 25px;
+            font-weight: bold;
+          }
+
+          .greet {
+            color: #2c3e50;
+            font-size: 15px;
+            font-weight: normal;
+          }
         }
       }
     }

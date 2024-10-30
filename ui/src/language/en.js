@@ -1,4 +1,30 @@
 export default {
+  login: {
+    welcome: 'Welcome',
+    greet: 'It\'s great to see you.',
+    username: 'Username',
+    password: 'Password',
+    noAccountTip1: 'Don\'t have an account? ',
+    noAccountTip2: 'Get started.',
+    forgotPassword: 'Forgot password?',
+    submit: 'Let\'s go'
+  },
+  navbar: {
+    analysis: {
+      showList: 'Show List',
+      listCountPrefix: 'total ',
+      listCountSuffix: ' news',
+      clearList: 'Clear List',
+      sendList: 'Send List',
+      notifications: {
+        clear: {
+          title: 'The news list has been cleared.',
+          message: ''
+        }
+      }
+    },
+  },
+
   chartsName: {
     dailyArticlesCount: 'Daily Articles Count',
     ActorCountryCode: 'Actor Country Code',
@@ -16,6 +42,8 @@ export default {
     yesterdayCount: 'Yesterday\'s News'
   },
   search: {
+    loading: 'loading...',
+    empty: 'No Data',
     detailSearch: 'Detail Search',
     keyword: 'Keyword: ',
     caseSensitive: 'Case Sensitive',
@@ -29,7 +57,7 @@ export default {
     wordMatchTooltip: 'Find only complete words.',
     source: 'Source: ',
     sourceTip: 'Source',
-    contry: 'contry: ',
+    contry: 'country: ',
     contryTip: 'Select country.',
     timeRange: 'Time Range: ',
     startTime: 'Start Time',
@@ -43,7 +71,36 @@ export default {
     query: 'Query',
     totalPre: 'total ',
     totalPost: ' news',
-    addToList: 'Add To List'
+    addToList: 'Add To List',
+    queryInList: 'Only Query in List',
+    addToListTips: {
+      confirmTitle: 'Confirm Add',
+      confirmContent1: 'Sure you want to add all the news from the current query to the list? There are a total of ',
+      confirmContent2: ' news data in this query.',
+      confirmContent3: 'When the number of news is high, it will take longer. Therefore only the first ',
+      confirmContent4: ' news items will be added.',
+      confirmBtn: 'Yes',
+      quitBtn: 'No'
+    },
+    notifications: {
+      error: {
+        title: 'Query Data Error!',
+        message: 'Additional data is currently being requested, please wait.'
+      },
+      wait: {
+        title: 'In the request data.',
+        message: 'All news data for the current query is being fetched.'
+      },
+      success: {
+        title: 'Add to list successful.',
+        message1: 'Successfully added ',
+        message2: ' news items.'
+      }
+    }
+  },
+  card: {
+    addToList: 'Add to list',
+    removeFromList: 'Remove from list',
   },
   countrys: {
     China: 'China',
@@ -240,5 +297,4 @@ export default {
     Zambia: 'Zambia',
     Zimbabwe: 'Zimbabwe'
   },
-  loading: 'loading...'
 }

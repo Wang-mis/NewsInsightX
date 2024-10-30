@@ -53,6 +53,14 @@
         </el-form-item>
 
         <el-form-item style="margin-bottom: 0;">
+          <el-checkbox
+            v-model="queryInList"
+            :label="$t('search.queryInList')"
+            size="large"
+            style="margin-right: 10px;" />
+        </el-form-item>
+
+        <el-form-item style="margin-bottom: 0;">
           <el-button type="primary" @click="onSubmit">{{ $t('search.query') }}</el-button>
         </el-form-item>
       </el-form>
@@ -63,8 +71,11 @@
         {{ $t('search.totalPre') + searchData.total + $t('search.totalPost') }}
       </div>
 
-      <el-button type="primary" @click="addToListDialogVisible = true">{{ $t('search.addToList') }}</el-button>
+      <el-button v-show="!queryInList" type="primary" @click="addToListDialogVisible = true">
+        {{ $t('search.addToList') }}
+      </el-button>
 
+      <!-- 确认添加数据到清单的对话框 -->
       <el-dialog
         width="30%"
         v-model="addToListDialogVisible"
@@ -72,19 +83,30 @@
       >
         <template #header="{ close, titleId, titleClass }">
           <div class="my-header">
-            <h4 :id="titleId" :class="titleClass">确认将新闻加入清单</h4>
+            <h4 :id="titleId" :class="titleClass">{{ $t('search.addToListTips.confirmTitle') }}</h4>
           </div>
         </template>
-        <span>确定要将当前查询到的所有新闻加入清单吗？本次查询共有{{ searchData.total }}条新闻数据。</span>
+        <span>
+          {{
+            $t('search.addToListTips.confirmContent1') +
+            String(searchData.total) +
+            $t('search.addToListTips.confirmContent2')
+          }}
+        </span>
+        <br />
         <br />
         <span
-          v-show="searchData.total > maxToListCount">
-          当新闻数量较多时，会花费较长时间。因此只会添加前{{ maxToListCount }}条新闻。
+          v-show="searchData.total > maxToListCount" style="font-weight: bold">
+          {{
+            $t('search.addToListTips.confirmContent3') +
+            String(maxToListCount) +
+            $t('search.addToListTips.confirmContent4')
+          }}
         </span>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="addToListDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="addToList">确定</el-button>
+            <el-button @click="addToListDialogVisible = false">{{ $t('search.addToListTips.quitBtn') }}</el-button>
+            <el-button type="primary" @click="addToList">{{ $t('search.addToListTips.confirmBtn') }}</el-button>
           </div>
         </template>
 
@@ -178,12 +200,12 @@
     </Transition>
 
     <div v-show="!updating && newsList.length < 1" style="height: calc(100vh - 70px - 40px);">
-      <el-empty description="暂无数据" :image-size="300" style="height: 100%; width: 100%;" />
+      <el-empty :description="t('search.empty')" :image-size="300" style="height: 100%; width: 100%;" />
     </div>
 
     <div
       class="news-cards-container"
-      :style="'height: calc(100vh - ' + (showSearchDetails ? '2' : '1') + ' * 70px - 40px); align-items: flex-start;'"
+      :style="{height: `calc(100vh - ${showSearchDetails ? '2' : '1'} * 70px - 40px)`, alignItems: 'flex-start'}"
       v-show="updating || newsList.length > 0"
       @wheel="updateNewsListScroll"
     >
@@ -191,7 +213,7 @@
         <VNewCard :data="item" :keywords="searchData.keywords" />
       </div>
       <div class="loading-icon" v-show="updating">
-        {{ $t('loading') }}
+        {{ $t('search.loading') }}
       </div>
     </div>
 
@@ -210,6 +232,7 @@ import 'tippy.js/themes/light.css'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { ElNotification } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
 
 // region 获取今天的日期和30天前的日期
 
@@ -259,6 +282,8 @@ const searchData = reactive({
   total: 0
 })
 const store = useStore()
+const route = useRoute()
+const router = useRouter()
 const wordCountRanges = [
   { value: [0, 1000], label: '≤1000' },
   { value: [1001, 3000], label: '>1000 && ≤3000' },
@@ -273,6 +298,7 @@ const queryByContentBox = ref(null)
 const wordMatchBox = ref(null)
 const tooltipInstances = []
 
+// 显示详细搜索
 watch(showSearchDetails, (newValue) => {
   if (newValue) {
     if (tooltipInstances.length > 0) return
@@ -316,12 +342,14 @@ watch(showSearchDetails, (newValue) => {
   }
 })
 
+// 切换语言时更新Tooltip
 watch(locale, () => {
   if (tooltipInstances.length !== 3) return
   tooltipInstances[0].setContent(t('search.caseSensitiveTooltip'))
   tooltipInstances[1].setContent(t('search.queryContentTooltip'))
   tooltipInstances[2].setContent(t('search.wordMatchTooltip'))
 })
+
 // endregion 高级搜索的Tooltips
 
 const sourceOptions = [
@@ -547,18 +575,29 @@ const countryOptions = computed(() => [
   { value: 'ZWE', label: t('countrys.Zimbabwe') }
 ])
 
+onBeforeMount(() => document.title = 'Search')
+
 // region 查询新闻
+const queryInList = ref(false)
 const newsList = ref([])
 const updating = ref(false)
+// 根据参数判断是否查询清单内容
+onBeforeMount(() => {
+  if (route.params.queryInList !== undefined)
+    queryInList.value = JSON.parse(route.params.queryInList)
+  else queryInList.value = false
+})
 // 跳转到该网页时，请求第一页数据
-onBeforeMount(() => document.title = "Search")
-onMounted(async () => await getNews(searchData, false))
+onMounted(async () => await getNews(searchData))
 // 请求后端新闻文章
 const getNews = async (data) => {
   if (updating.value) return // 不重复请求数据
   updating.value = true
   const configData = { ...data }
   lastSearchData = { ...data }
+  // 如果勾选只查询清单内容，则传输ids列表
+  if (queryInList.value)
+    configData.ids = [...store.state.analysisNewsIds]
   console.log(new Date(), '开始请求数据')
   await queryNews(configData).then(res => {
     if (res.code === 0) {
@@ -570,6 +609,16 @@ const getNews = async (data) => {
   updating.value = false
   console.log(new Date(), '请求数据成功')
 }
+
+// 修改route参数时重新请求数据
+watch(() => route.params.queryInList, (newValue) => queryInList.value = JSON.parse(newValue))
+// 选择只查询清单内容时重新请求数据
+watch(queryInList, async () => {
+  searchData.total = 0
+  newsList.value.length = 0
+  searchData.page = 1
+  await getNews(searchData)
+})
 // 滚动时请求新数据
 const updateNewsListScroll = async (event) => {
   if (updating.value || newsList.value.length >= searchData.total) return
@@ -588,19 +637,19 @@ const onSubmit = async () => {
   searchData.total = 0
   newsList.value.length = 0 // 清空新闻列表
   searchData.page = 1 // 将页码修改为第一页
-  await getNews(searchData, false)
+  await getNews(searchData)
 }
 // endregion 请求数据
 
 // region 将查询到的所有新闻加入清单
-const maxToListCount = ref(500)
+const maxToListCount = ref(5000)
 const addToListDialogVisible = ref(false)
 const addToList = async () => {
   addToListDialogVisible.value = false
   if (updating.value) {
     ElNotification({
-      title: '请求数据失败！',
-      message: '当前正在请求其他数据，请等待。',
+      title: t('search.notifications.error.title'),
+      message: t('search.notifications.error.message'),
       type: 'error',
       duration: 1500
     })
@@ -608,8 +657,8 @@ const addToList = async () => {
   }
   // 弹出提示框
   const waitingNotification = ElNotification({
-    title: '请求数据中',
-    message: '正在获取当前查询的所有新闻数据',
+    title: t('search.notifications.wait.title'),
+    message: t('search.notifications.wait.message'),
     type: 'info',
     duration: 0
   })
@@ -628,8 +677,10 @@ const addToList = async () => {
       // 完成请求，弹出提示框
       waitingNotification.close()
       ElNotification({
-        title: '添加至清单成功',
-        message: '成功添加' + Math.min(lastSearchData.total, maxToListCount.value) + '条新闻',
+        title: t('search.notifications.success.title'),
+        message: t('search.notifications.success.message1') +
+          String(Math.min(lastSearchData.total, maxToListCount.value)) +
+          t('search.notifications.success.message2'),
         type: 'success',
         duration: 1500
       })

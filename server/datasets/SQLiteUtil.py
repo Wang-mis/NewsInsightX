@@ -315,7 +315,7 @@ def update():
     counts_day_data['updated'] = False
 
 
-def query_news(args):
+def query_news(args: dict):
     page = args["page"]
     limit = args["limit"]
     offset_data = (page - 1) * limit
@@ -331,6 +331,11 @@ def query_news(args):
     country = args['country']
     country = '' if (country is None or len(country) == 0) else country[0]
 
+    ids: None | list[str] = None
+    if 'ids' in args:
+        ids = args['ids']
+    print("ids = ", str(ids))
+
     # 获取查询的字数范围
     if isinstance(word_count_range, list):
         min_count = int(word_count_range[0])
@@ -345,6 +350,7 @@ def query_news(args):
     else:
         start_date, end_date = 00000000, 99999999
 
+    # region print(...)
     print("按关键词和时间段查找文章，"
           "Keywords = " + str(keywords) +
           ", Case Sensitive = " + str(case_sensitive) +
@@ -357,6 +363,8 @@ def query_news(args):
           ", Page = " + str(page) +
           ", Limit = " + str(limit) +
           ", Sources = " + str(sources))
+
+    # endregion
 
     def process_keyword(k):
         if word_match:
@@ -378,6 +386,12 @@ def query_news(args):
         return fn(conditions[0], combine_condition(conditions[1:], fn))
 
     # 从数据库中查找相应记录
+
+    # 如果传入了ids参数，则只从这些id中查找
+    if ids is not None:
+        query_in_ids = NewItem.UniqueID.in_(ids)
+    else:
+        query_in_ids = True
 
     # region 关键词筛选
     keywords_condition_list = []
@@ -409,6 +423,7 @@ def query_news(args):
         now_query = (session
                      .query(NewItem)
                      .filter(and_(NewItem.DTime >= start_date, NewItem.DTime <= end_date))  # 匹配日期
+                     .filter(query_in_ids)
                      .filter(sources_condition)  # 匹配新闻媒体
                      .filter(keywords_condition)
                      .filter(and_(func.length(NewItem.Content) >= min_count, func.length(NewItem.Content) <= max_count))
