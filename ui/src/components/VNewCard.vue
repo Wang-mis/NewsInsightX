@@ -16,7 +16,9 @@
       {{ data.Author }}
     </div>
 
+    <!-- 其他信息 -->
     <div class="other-info-container">
+      <!-- 发布日期和新闻媒体 -->
       <div class="date-and-source">
         <div class="new-item" style="color: #aaaaaa">
           <el-icon class="new-item-icon">
@@ -32,13 +34,14 @@
         </div>
       </div>
       <div style="flex-grow: 1"></div>
+      <!-- 加入清单按钮 -->
       <div ref="addToListRef" class="add-to-list"
            style="display: flex; justify-content: center; align-items: center"
            v-show="showAddToList">
         <el-button :icon="Plus" circle v-if="!inList"
-                   @click.stop="store.commit('appendAnalysisNewsIds', [data.UniqueID])"></el-button>
+                   @click.stop="store.commit('appendAnalysisNewsIds', [data.UniqueID])" />
         <el-button :icon="Minus" circle v-if="inList"
-                   @click.stop="store.commit('deleteAnalysisNews', data.UniqueID)"></el-button>
+                   @click.stop="store.commit('deleteAnalysisNews', data.UniqueID)" />
       </div>
     </div>
   </el-card>
@@ -108,7 +111,7 @@ let addToListTippy = null
 onMounted(() => {
   addToListTippy = tippy(addToListRef.value, {
     theme: 'light',
-    content: i18n.t('card.addToList'),
+    content: inList.value ? i18n.t('card.removeFromList') : i18n.t('card.addToList'),
     placement: 'top'
   })
 })

@@ -28,14 +28,38 @@ const sendList = async () => {
   const newsIds = []
   // 将数据传输给Biaseer的后端服务器
   const data = { 'ids': [...store.state.analysisNewsIds] }
-  // Biaseer部署在本地，需要Chrome浏览器开启跨域--disable-web-security
-  const uri = 'http://10.108.17.47:14449/update_data'
-  axios.post(uri, data).then(response => console.log(response)).catch(error => console.log(error))
   // Biaseer部署在云服务器上
-  // await updateBiaseerData(data).then(res => {
-  //   console.log(res)
-  // })
+  const waitingNotification = ElNotification({
+    title: i18n.t('navbar.analysis.notifications.wait.title'),
+    message: i18n.t('navbar.analysis.notifications.wait.message'),
+    type: 'info',
+    duration: 0
+  })
+  await updateBiaseerData(data).then(res => {
+    waitingNotification.close()
+    if (res.code === 200) {
+      ElNotification({
+        title: i18n.t('navbar.analysis.notifications.success.title'),
+        dangerouslyUseHTMLString: true,
+        message: sendSuccessNotificationMessage.value,
+        type: 'success',
+        duration: 0
+      })
+      // 跳转
+      setTimeout(() => window.open('http://123.57.216.53:5174/', '_blank'), 3000)
+    }
+  })
 }
+
+const sendSuccessNotificationMessage = computed(() => {
+  return '<span>' +
+    i18n.t('navbar.analysis.notifications.success.message1') + '</span>' + '<br/>' + '<span>' +
+    i18n.t('navbar.analysis.notifications.success.message2') + '</span>' + '<br/>' + '<span>' +
+    i18n.t('navbar.analysis.notifications.success.message3') +
+    '<a href="http://123.57.216.53:5174/" target="_blank">' +
+    i18n.t('navbar.analysis.notifications.success.message4') + '</a>' +
+    i18n.t('navbar.analysis.notifications.success.message5') + '</span>'
+})
 
 const toShowList = () => {
   const currentPath = window.location.pathname

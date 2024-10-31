@@ -20,9 +20,21 @@ export default {
         clear: {
           title: 'The news list has been cleared.',
           message: ''
+        },
+        wait: {
+          title: 'Processing a request in progress.',
+          message: 'Processing data.'
+        },
+        success: {
+          title: 'Processing complete.',
+          message1: 'About to jump to the Event Evolution System front-end page.',
+          message2: 'Please set your browser to allow popups.',
+          message3: 'If you haven\'t jumped for a long time, click ',
+          message4: 'here',
+          message5: '.'
         }
       }
-    },
+    }
   },
 
   chartsName: {
@@ -100,7 +112,7 @@ export default {
   },
   card: {
     addToList: 'Add to list',
-    removeFromList: 'Remove from list',
+    removeFromList: 'Remove from list'
   },
   countrys: {
     China: 'China',
@@ -296,5 +308,5 @@ export default {
     Yemen: 'Yemen',
     Zambia: 'Zambia',
     Zimbabwe: 'Zimbabwe'
-  },
+  }
 }

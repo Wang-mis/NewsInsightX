@@ -20,6 +20,18 @@ export default {
         clear: {
           title: '新闻清单已清空',
           message: ''
+        },
+        wait: {
+          title: '处理请求中',
+          message: '正在处理数据。'
+        },
+        success: {
+          title: '处理完成',
+          message1: '即将跳转至事件演变系统前端页面。',
+          message2: '请设置浏览器允许弹出窗口。',
+          message3: '若长时间未跳转，点击',
+          message4: '此处',
+          message5: '跳转。'
         }
       }
     }
